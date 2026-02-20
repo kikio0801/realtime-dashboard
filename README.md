@@ -132,10 +132,10 @@ realtime-dashboard/
 ### 1. 백엔드 실행
 최초 실행 시 고속 파이썬 패키지 매니저인 `uv`를 사용해 환경을 구성합니다. 
 
-> **💡 `uv` 설치 방법 (Windows)**
-> 만약 `uv` 가 설치되어 있지 않다면, PowerShell에서 아래 명령어를 입력하여 설치하세요.
-> ```powershell
-> powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+> **💡 `uv` 설치 방법 (Git Bash)**
+> 만약 `uv` 가 설치되어 있지 않다면, 터미널에서 아래 명령어를 입력하여 설치하세요.
+> ```bash
+> curl -LsSf https://astral.sh/uv/install.sh | sh
 > ```
 
 ```bash
