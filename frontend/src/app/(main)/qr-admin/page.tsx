@@ -26,13 +26,31 @@ export default function QRAdminPage() {
     // 1. 개발 서버가 --host 0.0.0.0 옵션으로 실행 중이어야 합니다.
     // 2. PC와 모바일이 동일한 Wi-Fi 네트워크에 연결되어 있어야 합니다.
     // 3. 브라우저 주소창에 localhost가 아닌 Network IP(예: 192.168.x.x)로 접속한 상태에서 QR을 생성해야 합니다.
-    const timeout = setTimeout(() => {
+    
+    const initialize = async () => {
+      let detectedBaseUrl = window.location.origin;
+      
+      try {
+        // 백엔드에서 서버의 로컬 IP 정보를 가져옵니다.
+        const response = await fetch('http://localhost:8000/api/system/info');
+        const data = await response.json();
+        
+        // 현재 localhost로 접속 중이라면, QR 코드는 편리하게 Network IP 주소로 생성합니다.
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          detectedBaseUrl = `http://${data.local_ip}:3000`;
+        }
+      } catch (error) {
+        console.error('IP 감지 실패:', error);
+      }
+
       setQrState({
         key: uuidv4(),
-        baseUrl: window.location.origin,
+        baseUrl: detectedBaseUrl,
         mounted: true
       })
-    }, 0)
+    };
+
+    const timeout = setTimeout(initialize, 0)
     return () => clearTimeout(timeout)
   }, [])
 

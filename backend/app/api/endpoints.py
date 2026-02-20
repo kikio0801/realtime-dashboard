@@ -43,3 +43,22 @@ async def update_patient_status(patient_id: str, update: PatientStatusUpdate):
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
     return patient
+
+
+@router.get("/system/info")
+async def get_system_info():
+    """Get system information including local IP"""
+    import socket
+    try:
+        # Get local IP
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+    except Exception:
+        local_ip = "localhost"
+        
+    return {
+        "local_ip": local_ip,
+        "port": 8000
+    }
