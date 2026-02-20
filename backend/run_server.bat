@@ -1,0 +1,5 @@
+@echo off
+echo Starting Backend Server with uv...
+cd /d %~dp0
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+pause

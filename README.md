@@ -1,15 +1,17 @@
 # 🏥 Realtime Dashboard
 
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Pandas](https://img.shields.io/badge/Pandas-2.2-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
+[![CodeRabbit](https://img.shields.io/badge/CodeRabbit-FF5A00?logoColor=white)](https://coderabbit.ai/)
 [![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-red.svg)](#-라이선스-license)
 
 실시간 환자 모니터링을 위한 **의료용 대시보드 시스템**입니다.
-프론트엔드는 React와 Vite로 구축되었으며, 백엔드는 FastAPI, 데이터 분석은 Pandas로 구성되어 있습니다.
+프론트엔드는 Next.js(App Router) 기반으로 구축되었으며, 백엔드는 FastAPI, 데이터 처리 및 분석 로직은 모듈화된 Pandas(Analytics) 기반으로 구성되어 있습니다.
 
 ## 🚀 프로젝트 목적
 
@@ -20,7 +22,7 @@
 >
 > **💡 개발 취지**
 >
-> 본 프로젝트는 실제 데이터베이스를 구축하는 대신 **React(Frontend) - FastAPI(Backend) - Pandas(Data Processing)** 간의 유기적인 데이터 흐름을 실험하고 검증하는 데에 초점을 맞추었습니다.
+> 본 프로젝트는 실제 데이터베이스를 구축하는 대신 **Next.js(Frontend) - FastAPI(Backend) - Pandas(Data Processing)** 간의 유기적인 데이터 흐름을 실험하고 검증하는 데에 초점을 맞추었습니다.
 > 특히 헬스케어 데이터(환자 정보)를 다루는 로직을 구현함에 있어, 복잡한 인프라 설정 없이 코드 레벨의 **Mock Data**를 활용하여 개발 효율성을 높이고 파이프라인 구축에 집중했습니다.
 
 ## ✨ 핵심 기능
@@ -42,24 +44,33 @@
 ### Frontend
 | 분류 | 기술 |
 | :--- | :--- |
-| **Framework** | [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) |
-| **Build Tool** | [Vite 5](https://vitejs.dev/) |
-| **Styling** | [Tailwind CSS](https://tailwindcss.com/) + Shadcn UI |
-| **State Mgt** | React Context API |
+| **Framework** | [Next.js 16](https://nextjs.org/) (App Router, **React Compiler 활성화**) + [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) |
+| **Styling** | [Tailwind CSS 3](https://tailwindcss.com/) + Shadcn UI (Customized) |
+| **State Mgt** | [Zustand](https://zustand-demo.pmnd.rs/) |
+
+### Infrastructure & Tools
+| 분류 | 기술 |
+| :--- | :--- |
+| **Database** | [Supabase](https://supabase.com/) (추후 연동 예정) |
+| **Code Review** | [CodeRabbit](https://coderabbit.ai/) (AI 자동 코드 리뷰) |
 
 ### Backend
 | 분류 | 기술 |
 | :--- | :--- |
 | **Framework** | [FastAPI](https://fastapi.tiangolo.com/) |
-| **Data Processing** | [Pandas](https://pandas.pydata.org/) |
+| **Data Processing** | [Pandas](https://pandas.pydata.org/) (Analytics 모듈) |
 | **Server(Execution Engine)** | [Uvicorn](https://www.uvicorn.org/) |
 
-### Data Management (Mock Data)
-실제 DB 대신 Python 리스트 형태의 목 데이터를 사용하여 서버 실행 시마다 가상 데이터를 생성합니다.
+### Data Management (Mock Data & Analytics)
+실제 DB 대신 Python 리스트 형태의 목 데이터를 사용하여 서버 실행 시마다 가상 데이터를 생성합니다. 
+**중요 사항**: 데이터 처리 로직은 분리된 `analytics` 모듈 위에서 수행되며, FastAPI는 이를 임포트해 단일 서버(모놀리식 SOA 형태)로 서빙합니다.
 
-- **파일 경로**: `backend/app/data/mock_data.py`
-- **포함 내용**: 한국인 성/이름 조합, 주요 진단명 리스트 (예: 급성 심근경색, 뇌경색 등)
-- **작동 방식**: `patient_service.py`에서 위 데이터를 `import`하여 Pandas DataFrame으로 변환 후 REST API로 서빙
+**💡 아키텍처 구조 (모놀리식 SOA)**
+현재 스케일에서는 MSA 단위의 분리보다 데이터 분석 모듈(`analytics`)과 API 서빙(`backend`) 역할을 코드 레벨에서 명확히 분리하여 응집도를 높였습니다. 이를 통해 불필요한 네트워크 지연을 방지하고 유지보수를 간소화했습니다.
+
+- **데이터 소스**: `backend/app/data/mock_data.py`
+- **Analytics 모듈**: `analytics/pandas_logic.py`에서 Pandas DataFrame을 변환하고 통계 처리 담당
+- **작동 방식**: `backend/app/services/patient_service.py`에서 Analytics 모듈을 호출하여 REST API로 데이터 응답
 
 ## 📱 UI 플로우
 
@@ -119,15 +130,22 @@ realtime-dashboard/
 ## 🚀 시작하기
 
 ### 1. 백엔드 실행
-`backend` 폴더의 `run_server.bat` 파일을 더블 클릭하여 복잡한 cli 없이 간편하게 서버를 실행할 수 있습니다.
+최초 실행 시 초고속 파이썬 패키지 매니저인 `uv`를 사용해 환경을 구성합니다. (사전에 `uv` 설치가 필요합니다.)
+
+> **💡 기존 `pip` 환경에서 `uv`로 이주하기**
+> 이미 `python -m venv`로 환경을 구성했다면 기존 `venv` 폴더를 지연 없이 삭제한 후, `uv venv` 명령을 통해 새롭게 구성하는 것을 강력히 권장합니다. (`uv`는 압도적인 속도와 전용 패키징 시스템을 사용하므로, 기존 pip의 버전 업데이트 경고 `[notice] A new release of pip is available...` 등은 완전히 무시하셔도 됩니다.)
 
 ```bash
 cd backend
-# 가상환경 활성화 (Windows)
-source venv/Scripts/activate
+# 가상환경 생성 (uv 사용, 최초 1회)
+uv venv
+# 패키지 설치 (최초 1회)
+uv pip install -r requirements.txt
 # 서버 실행
-python -m uvicorn main:app --reload
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+> **단축 스크립트 실행 (선택)**: `backend` 폴더 내의 `run_server.bat` 파일을 더블 클릭하면 간편하게 서버를 띄울 수 있습니다 (사전에 패키지가 설치되어 있어야 합니다).
 
 ### 2. 프론트엔드 실행
 새로운 터미널을 열고 다음을 실행합니다.
@@ -137,11 +155,6 @@ cd frontend
 pnpm install
 pnpm dev
 ```
-
-## 📞 연락처 (Contact)
-
-- **Phone**: 010-2835-7421
-- **Email**: sadkop00@gmail.com
 
 ## 📄 라이선스 (License)
 
@@ -156,3 +169,8 @@ Copyright (c) 2026 **Yoon SangHwan** All Rights Reserved.
 - **이용 문의**: 상업적 활용 또는 프로젝트 협업에 관한 문의는 아래의 연락처를 통해 협의해 주시기 바랍니다.
 
 > **Note**: 본 프로젝트는 저작권법의 보호를 받는 독자적인 저작물이며, 무단 사용 시 법적 책임을 물을 수 있습니다.
+
+## 📞 연락처 (Contact)
+
+- **Phone**: 010-2835-7421
+- **Email**: sadkop00@gmail.com
