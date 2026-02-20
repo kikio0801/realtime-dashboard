@@ -130,10 +130,13 @@ realtime-dashboard/
 ## 🚀 시작하기
 
 ### 1. 백엔드 실행
-최초 실행 시 초고속 파이썬 패키지 매니저인 `uv`를 사용해 환경을 구성합니다. (사전에 `uv` 설치가 필요합니다.)
+최초 실행 시 고속 파이썬 패키지 매니저인 `uv`를 사용해 환경을 구성합니다. 
 
-> **💡 기존 `pip` 환경에서 `uv`로 이주하기**
-> 이미 `python -m venv`로 환경을 구성했다면 기존 `venv` 폴더를 지연 없이 삭제한 후, `uv venv` 명령을 통해 새롭게 구성하는 것을 강력히 권장합니다. (`uv`는 압도적인 속도와 전용 패키징 시스템을 사용하므로, 기존 pip의 버전 업데이트 경고 `[notice] A new release of pip is available...` 등은 완전히 무시하셔도 됩니다.)
+> **💡 `uv` 설치 방법 (Windows)**
+> 만약 `uv` 가 설치되어 있지 않다면, PowerShell에서 아래 명령어를 입력하여 설치하세요.
+> ```powershell
+> powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+> ```
 
 ```bash
 cd backend
