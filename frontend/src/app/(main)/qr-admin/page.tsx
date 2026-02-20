@@ -20,10 +20,12 @@ export default function QRAdminPage() {
   })
   const [copied, setCopied] = useState(false)
 
-  // Initialize on client side
+  // 클라이언트 사이드 초기화
   useEffect(() => {
-    // Note: To access from mobile, ensure the dev server is started with --host 0.0.0.0
-    // and you access this page using the Network IP (e.g., http://192.168.x.x:3000/qr-admin)
+    // [모바일 접속 주의사항]
+    // 1. 개발 서버가 --host 0.0.0.0 옵션으로 실행 중이어야 합니다.
+    // 2. PC와 모바일이 동일한 Wi-Fi 네트워크에 연결되어 있어야 합니다.
+    // 3. 브라우저 주소창에 localhost가 아닌 Network IP(예: 192.168.x.x)로 접속한 상태에서 QR을 생성해야 합니다.
     const timeout = setTimeout(() => {
       setQrState({
         key: uuidv4(),
@@ -36,10 +38,10 @@ export default function QRAdminPage() {
 
   const { key: qrKey, baseUrl, mounted } = qrState
   
-  // Generate QR URL
+  // QR 코드 URL 생성
   const qrUrl = mounted ? `${baseUrl}/join?key=${qrKey}` : ''
 
-  // Generate new QR code
+  // 새로운 QR 코드 생성
   const handleGenerateNew = () => {
     setQrState(prev => ({
       ...prev,
@@ -49,7 +51,7 @@ export default function QRAdminPage() {
     toast.success('새로운 QR 코드가 생성되었습니다!')
   }
 
-  // Copy URL to clipboard
+  // URL을 클립보드에 복사
   const handleCopyUrl = async () => {
     try {
       await navigator.clipboard.writeText(qrUrl)
