@@ -140,7 +140,7 @@ cd backend
 uv venv
 # 패키지 설치 (최초 1회)
 uv pip install -r requirements.txt
-# 서버 실행
+# 서버 실행 (네트워크 접속을 위해 --host 0.0.0.0 권장)
 uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -152,8 +152,13 @@ uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```bash
 cd frontend
 pnpm install
+# 이제 자동으로 --host 0.0.0.0으로 실행되어 외부 기기 접속이 가능하며, QR 코드도 자동으로 IP를 감지합니다.
 pnpm dev
 ```
+
+### 💡 모바일 접속이 안 되시나요? (공용 와이파이/카페 등)
+공공장소의 와이파이나 '공용 네트워크' 환경에서는 윈도우 방화벽이 모바일 접속을 차단할 수 있습니다. 
+이 경우 **`scripts/open_firewall.bat`** 파일을 **[관리자 권한으로 실행]**해 주세요. 자동으로 3000번(프론트)과 8000번(백엔드) 포트를 열어줍니다.
 
 ## 📄 라이선스 (License)
 
