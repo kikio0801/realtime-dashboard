@@ -119,7 +119,7 @@ realtime-dashboard/
 ├── analytics/            # Pandas 기반 데이터 처리 및 분석 모듈
 │   ├── pandas_logic.py   # 데이터 분석 핵심 로직
 │   └── ...
-└── ui-flow-assets/       # README용 UI 스크린샷 자산
+└── ui-flow-assets/       # README용 UI 스크린샷 리소스
 ```
 
 ## 🚀 시작하기

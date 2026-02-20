@@ -9,25 +9,42 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 
 export default function QRAdminPage() {
-  const [qrKey, setQrKey] = useState<string>('')
-  const [baseUrl, setBaseUrl] = useState('')
-  const [mounted, setMounted] = useState(false)
+  const [qrState, setQrState] = useState<{
+    key: string;
+    baseUrl: string;
+    mounted: boolean;
+  }>({
+    key: '',
+    baseUrl: '',
+    mounted: false
+  })
   const [copied, setCopied] = useState(false)
 
   // Initialize on client side
   useEffect(() => {
-    setQrKey(uuidv4())
-    setBaseUrl(window.location.origin)
-    setMounted(true)
+    // Note: To access from mobile, ensure the dev server is started with --host 0.0.0.0
+    // and you access this page using the Network IP (e.g., http://192.168.x.x:3000/qr-admin)
+    const timeout = setTimeout(() => {
+      setQrState({
+        key: uuidv4(),
+        baseUrl: window.location.origin,
+        mounted: true
+      })
+    }, 0)
+    return () => clearTimeout(timeout)
   }, [])
 
+  const { key: qrKey, baseUrl, mounted } = qrState
+  
   // Generate QR URL
   const qrUrl = mounted ? `${baseUrl}/join?key=${qrKey}` : ''
 
   // Generate new QR code
   const handleGenerateNew = () => {
-    const newKey = uuidv4()
-    setQrKey(newKey)
+    setQrState(prev => ({
+      ...prev,
+      key: uuidv4()
+    }))
     setCopied(false)
     toast.success('새로운 QR 코드가 생성되었습니다!')
   }
