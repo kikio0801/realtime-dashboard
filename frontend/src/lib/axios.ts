@@ -1,3 +1,5 @@
+'use client'
+
 import axios, { type AxiosError, type AxiosRequestConfig } from 'axios'
 
 export const api = axios.create({

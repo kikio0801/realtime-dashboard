@@ -42,6 +42,7 @@
 ## 🛠 기술 스택
 
 ### Frontend
+
 | 분류 | 기술 |
 | :--- | :--- |
 | **Framework** | [Next.js 16](https://nextjs.org/) (App Router) + [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) |
@@ -50,12 +51,14 @@
 | **State Mgt** | [Zustand](https://zustand-demo.pmnd.rs/) |
 
 ### Infrastructure & Tools
+
 | 분류 | 기술 |
 | :--- | :--- |
 | **Database** | [Supabase](https://supabase.com/) (추후 연동 예정) |
 | **Code Review** | [CodeRabbit](https://coderabbit.ai/) (AI 자동 코드 리뷰) |
 
 ### Backend
+
 | 분류 | 기술 |
 | :--- | :--- |
 | **Framework** | [FastAPI](https://fastapi.tiangolo.com/) |
@@ -167,8 +170,3 @@ Copyright (c) 2026 **Yoon SangHwan** All Rights Reserved.
 - **이용 문의**: 상업적 활용 또는 프로젝트 협업에 관한 문의는 아래의 연락처를 통해 협의해 주시기 바랍니다.
 
 > **Note**: 본 프로젝트는 저작권법의 보호를 받는 독자적인 저작물이며, 무단 사용 시 법적 책임을 물을 수 있습니다.
-
-## 📞 연락처 (Contact)
-
-- **Phone**: 010-2835-7421
-- **Email**: sadkop00@gmail.com

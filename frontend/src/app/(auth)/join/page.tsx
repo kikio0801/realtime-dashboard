@@ -28,12 +28,6 @@ function JoinForm() {
     }
   }, [router])
 
-  // Validate QR key
-  useEffect(() => {
-    if (!key) {
-      toast.error('유효하지 않은 QR 코드입니다.')
-    }
-  }, [key])
 
   const handleJoin = async () => {
     if (!key) {
@@ -170,7 +164,13 @@ function JoinForm() {
 
 export default function JoinPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
+          <div className="text-muted-foreground">Loading...</div>
+        </div>
+      }
+    >
       <JoinForm />
     </Suspense>
   )

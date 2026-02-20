@@ -8,8 +8,7 @@ export function Header() {
 
   return (
     <header
-      className="bg-background sticky top-0 z-10 flex h-16 w-full items-center justify-between border-b-4 px-6 backdrop-blur-md transition-all duration-300 ease-in-out"
-      style={{ borderColor: 'rgba(201, 176, 132, 0.4)' }}
+      className="bg-background sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b-4 border-[rgba(201,176,132,0.4)] px-6 backdrop-blur-md transition-all duration-300 ease-in-out"
     >
       <Button
         variant="ghost"

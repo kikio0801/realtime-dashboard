@@ -5,11 +5,7 @@ Delegates pandas processing to analytics module
 import random
 from datetime import datetime, timedelta
 from typing import Optional
-import sys
-import os
 
-# Add root directory to python path for cross-module importing
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
 from app.models import Patient, PatientStatus
 from app.data.mock_data import SURNAMES, GIVEN_NAMES, DIAGNOSES

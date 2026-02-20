@@ -39,7 +39,9 @@ export default function QRAdminPage() {
       const processIpData = (data: SystemInfo) => {
         // 현재 localhost로 접속 중이라면, QR 코드는 편리하게 Network IP 주소로 생성합니다.
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-          detectedBaseUrl = `http://${data.local_ip}:3000`;
+          const protocol = window.location.protocol;
+          const port = window.location.port ? `:${window.location.port}` : '';
+          detectedBaseUrl = `${protocol}//${data.local_ip}${port}`;
         }
       };
 

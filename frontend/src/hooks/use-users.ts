@@ -39,7 +39,7 @@ export function useUser(id: number) {
   return useQuery({
     queryKey: userKeys.detail(id),
     queryFn: () => fetcher<User>(`/users/${id}`),
-    enabled: !!id,
+    enabled: Number.isFinite(id),
   })
 }
 
