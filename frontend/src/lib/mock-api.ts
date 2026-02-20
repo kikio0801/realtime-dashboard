@@ -17,6 +17,7 @@ const STORAGE_KEY = 'qr_auth_users'
  */
 const getUsers = (): User[] => {
   try {
+    if (typeof window === 'undefined') return []
     const data = localStorage.getItem(STORAGE_KEY)
     return data ? JSON.parse(data) : []
   } catch (error) {
@@ -31,7 +32,9 @@ const getUsers = (): User[] => {
  * Save users to mock database
  */
 const saveUsers = (users: User[]): void => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(users))
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(users))
+  }
 }
 
 /**

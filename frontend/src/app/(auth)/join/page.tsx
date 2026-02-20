@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+"use client"
+
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { LogIn, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,17 +10,10 @@ import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { registerUser } from '@/lib/mock-api'
 
-export const Route = createFileRoute('/join')({
-  component: JoinPage,
-  validateSearch: (search: Record<string, unknown>) => {
-    const key = typeof search.key === 'string' ? search.key : ''
-    return { key }
-  },
-})
-
-function JoinPage() {
-  const navigate = useNavigate()
-  const { key } = Route.useSearch()
+function JoinForm() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const key = searchParams.get('key') || ''
   const [nickname, setNickname] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -29,9 +24,9 @@ function JoinPage() {
 
     if (existingKey && existingName) {
       // User already registered, redirect to main silently
-      navigate({ to: '/dashboard' })
+      router.push('/')
     }
-  }, [navigate])
+  }, [router])
 
   // Validate QR key
   useEffect(() => {
@@ -73,7 +68,7 @@ function JoinPage() {
       localStorage.setItem('user_name', trimmedNickname)
 
       // Redirect to welcome page
-      navigate({ to: '/dashboard' })
+      router.push('/welcome')
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('already exists')) {
@@ -95,7 +90,7 @@ function JoinPage() {
 
   if (!key) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-center text-red-600">
@@ -111,7 +106,7 @@ function JoinPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
@@ -131,7 +126,7 @@ function JoinPage() {
               placeholder="예: 홍길동"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               disabled={isLoading}
               maxLength={20}
               className="text-base"
@@ -170,5 +165,13 @@ function JoinPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function JoinPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <JoinForm />
+    </Suspense>
   )
 }

@@ -1,13 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+"use client"
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { RotateCcw } from 'lucide-react'
 
-export const Route = createFileRoute('/')({
-  component: HomePage,
-})
-
-function HomePage() {
+export default function HomePage() {
   const handleResetAuth = () => {
     // Clear all authentication data
     localStorage.removeItem('user_key')
@@ -48,7 +45,7 @@ function HomePage() {
           <CardHeader>
             <CardTitle className="text-lg">Features</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
                 <div className="bg-primary h-2 w-2 rounded-full" />
@@ -59,6 +56,16 @@ function HomePage() {
                 <span>Monochrome Theme</span>
               </div>
             </div>
+            {/* Link to QR Admin */}
+            <Button
+              variant="default"
+              className="w-full bg-[#744638] hover:bg-[#5a362a] text-white"
+              asChild
+            >
+              <a href="/qr-admin">
+                QR 코드 발급 (체험 시작하기)
+              </a>
+            </Button>
           </CardContent>
         </Card>
 

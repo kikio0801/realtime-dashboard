@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+"use client"
+
+import { useState, useEffect } from 'react'
 import QRCode from 'react-qr-code'
 import { v4 as uuidv4 } from 'uuid'
 import { RefreshCw, Copy, Check } from 'lucide-react'
@@ -7,17 +8,21 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 
-export const Route = createFileRoute('/qr-admin')({
-  component: QRAdminPage,
-})
-
-function QRAdminPage() {
-  const [qrKey, setQrKey] = useState<string>(() => uuidv4())
+export default function QRAdminPage() {
+  const [qrKey, setQrKey] = useState<string>('')
+  const [baseUrl, setBaseUrl] = useState('')
+  const [mounted, setMounted] = useState(false)
   const [copied, setCopied] = useState(false)
 
+  // Initialize on client side
+  useEffect(() => {
+    setQrKey(uuidv4())
+    setBaseUrl(window.location.origin)
+    setMounted(true)
+  }, [])
+
   // Generate QR URL
-  const baseUrl = __APP_URL__ || window.location.origin
-  const qrUrl = `${baseUrl}/join?key=${qrKey}`
+  const qrUrl = mounted ? `${baseUrl}/join?key=${qrKey}` : ''
 
   // Generate new QR code
   const handleGenerateNew = () => {

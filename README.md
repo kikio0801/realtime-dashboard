@@ -110,21 +110,16 @@
 
 ```text
 realtime-dashboard/
-├── frontend/             # React 프론트엔드
-│   ├── src/
-│   │   ├── components/   # UI 컴포넌트
-│   │   ├── lib/          # API 클라이언트 및 유틸리티
-│   │   ├── routes/       # 페이지 라우팅
-│   │   └── types/        # TypeScript 타입 정의
+├── frontend/             # Next.js 프론트엔드 (React 19, Tailwind CSS)
+│   ├── src/              # 컴포넌트, 라우팅, 스타일 소스
 │   └── ...
 ├── backend/              # FastAPI 백엔드
-│   ├── app/
-│   │   ├── api/          # API 엔드포인트
-│   │   ├── models.py     # Pydantic 모델
-│   │   └── services/     # 비즈니스 로직 (Pandas 활용)
-│   ├── venv/             # 파이썬 가상환경
-│   └── run_server.bat    # 서버 실행 스크립트
-└── ...
+│   ├── app/              # API 및 비즈니스 로직
+│   └── ...
+├── analytics/            # Pandas 기반 데이터 처리 및 분석 모듈
+│   ├── pandas_logic.py   # 데이터 분석 핵심 로직
+│   └── ...
+└── ui-flow-assets/       # README용 UI 스크린샷 자산
 ```
 
 ## 🚀 시작하기

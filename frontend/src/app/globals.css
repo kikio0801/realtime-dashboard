@@ -1,22 +1,195 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import 'tailwindcss';
+@import 'tailwindcss/theme' layer(theme) important;
+@import 'tailwindcss/preflight' layer(base) important;
+@import 'tailwindcss/utilities' layer(utilities) important;
 
-:root {
-  --background: #fdfaf3; /* warm cream */
-  --foreground: #2d2a26;
-  --primary: #f59e0b; /* amber-500 */
-  --muted: #f3f4f6;
-  --accent: #fbbf24;
+/* Font Definitions */
+@font-face {
+    font-family: 'A2z';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-1Thin.woff2') format('woff2');
+    font-weight: 100;
+    font-display: swap;
 }
+@font-face {
+    font-family: 'A2z';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-2ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'A2z';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-3Light.woff2') format('woff2');
+    font-weight: 300;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'A2z';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'A2z';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-5Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'A2z';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-6SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'A2z';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-7Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'A2z';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-8ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'A2z';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-9Black.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+}
+
+/* Pretendard Import (CDN) */
+
+
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--root-font-sans); /* Use concrete root variable to avoid circularity */
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Outfit', 'Pretendard', sans-serif;
+:root {
+  /* Font Configuration (Switchable) */
+  --root-font-sans: 'A2z', 'Pretendard', sans-serif; /* Default: A2z */
+  /* --root-font-sans: 'Pretendard', sans-serif; */ /* Uncomment to switch to Pretendard */
+
+  /* Honey Spoon Theme */
+  --background: #ffffff; /* Pure White */
+  --foreground: #4a3b2a; /* Brown */
+  
+  --card: #ffffff;
+  --card-foreground: #4a3b2a;
+  
+  --popover: #ffffff;
+  --popover-foreground: #4a3b2a;
+  
+  --primary: #f0c419; /* Honey Gold */
+  --primary-foreground: #ffffff;
+  
+  --secondary: #fff5cc; /* Light Honey */
+  --secondary-foreground: #d99a00;
+  
+  --muted: #f7f2e8;
+  --muted-foreground: #8c7b6d;
+  
+  --accent: #fff9db; 
+  --accent-foreground: #4a3b2a;
+  
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  
+  --border: #c9b084; /* Reverted to lighter beige for natural look */
+  --input: #c9b084;
+  --ring: #f0c419; 
+  
+  --radius: 0.75rem;
+
+  /* Sidebar */
+  --sidebar: #fffbf0; /* Warm Cream */
+  --sidebar-foreground: #4a3b2a;
+  --sidebar-primary: #f0c419;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fff5cc; 
+  --sidebar-accent-foreground: #d99a00;
+  --sidebar-border: #c9b084; /* Stronger Warm Beige */
+  --sidebar-ring: #f0c419;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+
+  code, pre {
+    font-family: 'D2Coding', 'Consolas', 'Monaco', 'Courier New', monospace;
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in-delay-1 {
+    animation: fadeIn 0.6s ease-out 0.1s forwards;
+    opacity: 0;
+  }
+
+  .animate-fade-in-delay-2 {
+    animation: fadeIn 0.6s ease-out 0.2s forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }

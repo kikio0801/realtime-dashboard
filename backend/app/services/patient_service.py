@@ -1,20 +1,25 @@
 """
-Patient data service using Pandas
-Replaces localStorage logic from frontend
+Patient data service using Python & Pandas (SOA Architecture)
+Delegates pandas processing to analytics module
 """
-import pandas as pd
 import random
 from datetime import datetime, timedelta
 from typing import Optional
+import sys
+import os
+
+# Add root directory to python path for cross-module importing
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+
 from app.models import Patient, PatientStatus
 from app.data.mock_data import SURNAMES, GIVEN_NAMES, DIAGNOSES
-
+from analytics.pandas_logic import PatientDataProcessor
 
 class PatientService:
-    """Service for managing patient data using Pandas DataFrame"""
+    """Service for managing patient data, integrated with SOA analytics module"""
     
     def __init__(self):
-        self.df: pd.DataFrame = pd.DataFrame()
+        self.processor = PatientDataProcessor()
         
     def seed_patients(self, nurse_key: str, count: int = 5) -> list[Patient]:
         """Generate seed data for patients"""
@@ -45,46 +50,33 @@ class PatientService:
             )
             patients.append(patient)
         
-        # Convert to DataFrame
-        self.df = pd.DataFrame([p.model_dump() for p in patients])
+        # Load into Analytics processor
+        self.processor.load_data([p.model_dump() for p in patients])
         return patients
     
     def get_all(self) -> list[Patient]:
         """Get all patients"""
-        if self.df.empty:
-            return []
-        return [Patient(**row) for row in self.df.to_dict('records')]
+        records = self.processor.get_all_records()
+        return [Patient(**row) for row in records]
     
     def get_by_id(self, patient_id: str) -> Optional[Patient]:
         """Get patient by ID"""
-        if self.df.empty:
+        record = self.processor.find_by_id(patient_id)
+        if not record:
             return None
-        
-        result = self.df[self.df['id'] == patient_id]
-        if result.empty:
-            return None
-        
-        return Patient(**result.iloc[0].to_dict())
+        return Patient(**record)
     
     def get_by_nurse(self, nurse_key: str) -> list[Patient]:
         """Get patients assigned to a specific nurse"""
-        if self.df.empty:
-            return []
-        
-        result = self.df[self.df['assignedNurse'] == nurse_key]
-        return [Patient(**row) for row in result.to_dict('records')]
+        records = self.processor.find_by_nurse(nurse_key)
+        return [Patient(**row) for row in records]
     
     def update_status(self, patient_id: str, status: PatientStatus) -> Optional[Patient]:
         """Update patient status"""
-        if self.df.empty:
+        record = self.processor.update_field(patient_id, 'status', status)
+        if not record:
             return None
-        
-        mask = self.df['id'] == patient_id
-        if not mask.any():
-            return None
-        
-        self.df.loc[mask, 'status'] = status
-        return self.get_by_id(patient_id)
+        return Patient(**record)
 
 
 # Global instance (in-memory storage)

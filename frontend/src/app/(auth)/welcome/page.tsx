@@ -1,32 +1,35 @@
-import { useEffect } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+"use client"
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { PartyPopper } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
-export const Route = createFileRoute('/welcome')({
-  component: WelcomePage,
-})
+export default function WelcomePage() {
+  const router = useRouter()
+  const [userName, setUserName] = useState<string>('Guest')
 
-function WelcomePage() {
-  const navigate = useNavigate()
-  const userName = localStorage.getItem('user_name') || 'Guest'
+  useEffect(() => {
+    // Only access localStorage on client side
+    setUserName(localStorage.getItem('user_name') || 'Guest')
+  }, [])
 
   // Auto-redirect after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate({ to: '/' })
+      router.push('/')
     }, 3000)
 
     return () => clearTimeout(timer)
-  }, [navigate])
+  }, [router])
 
   const handleContinue = () => {
-    navigate({ to: '/' })
+    router.push('/')
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-md shadow-xl">
         <CardContent className="space-y-6 pt-12 pb-8">
           {/* Celebration Icon */}

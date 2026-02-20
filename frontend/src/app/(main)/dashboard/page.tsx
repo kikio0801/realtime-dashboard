@@ -1,10 +1,11 @@
+"use client"
+
 /**
  * Patient Monitoring Dashboard
  * Real-time vital signs monitoring for assigned patients
  */
 
 import { useState, useEffect } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
 import { useUser } from '@/hooks/use-user'
 import { useNursePatients } from '@/hooks/use-patients'
 import { useVitalsStore } from '@/stores/vitals-store'
@@ -22,10 +23,6 @@ import {
 import { cn } from '@/lib/utils'
 import { initializePatients } from '@/lib/patient-mock-api'
 import { calculatePatientStatus } from '@/features/dashboard/utils/vital-thresholds'
-
-export const Route = createFileRoute('/_authenticated/dashboard')({
-  component: DashboardPage,
-})
 
 /**
  * Stats Item Component (horizontal layout for single-line display)
@@ -63,7 +60,7 @@ function StatsItem({
   )
 }
 
-function DashboardPage() {
+export default function DashboardPage() {
   const { user } = useUser()
   // Store patient ID instead of full object to enable real-time updates
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
@@ -124,7 +121,7 @@ function DashboardPage() {
     ? [...patients]
         .map((p) => ({ ...p, status: calculatePatientStatus(p.vitals) }))
         .sort((a, b) => {
-          const priority = { critical: 0, warning: 1, stable: 2 }
+          const priority: Record<string, number> = { critical: 0, warning: 1, stable: 2 }
           return priority[a.status] - priority[b.status]
         })
     : []
