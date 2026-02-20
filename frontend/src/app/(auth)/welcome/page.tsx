@@ -12,6 +12,7 @@ export default function WelcomePage() {
 
   useEffect(() => {
     // Only access localStorage on client side
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUserName(localStorage.getItem('user_name') || 'Guest')
   }, [])
 

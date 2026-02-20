@@ -1,0 +1,29 @@
+commit e1756f8cf4aa691b281eac341e0b4464d91c239d
+Author: kikio1101 <kikio889@outlook.com>
+Date:   Fri Feb 20 22:13:20 2026 +0900
+
+    CodeRabbit PR 피드백 반영 및 코드 안정성 개선
+
+commit 9a3078eaa93c6fce392a3ff7df85cd81004a9caa
+Author: kikio1101 <kikio889@outlook.com>
+Date:   Fri Feb 20 21:36:43 2026 +0900
+
+    API Proxy(Rewrites) 설정 추가 및 관련 문서 업데이트
+
+commit 90be6aad8ee4605d8a31a241c9128f79494bcd1c
+Author: kikio1101 <kikio889@outlook.com>
+Date:   Fri Feb 20 21:32:23 2026 +0900
+
+    네트워크 설정 간소화, 하이드레이션 오류 해결 및 타입 안전성 개선
+
+commit bb086aeb33d315bac8ce7a0ae9d30752979ffdbe
+Author: kikio1101 <kikio889@outlook.com>
+Date:   Fri Feb 20 20:46:17 2026 +0900
+
+    refactor: 스크립트 파일 정리를 위해 scripts 폴더 생성 및 이동
+
+commit 1528ca056854bc7ec071619ccc05b942c2093da2
+Author: kikio1101 <kikio889@outlook.com>
+Date:   Fri Feb 20 20:38:36 2026 +0900
+
+    feat: 네트워크 IP 자동 감지 및 접속 편의성 개선 (package.json, QR 페이지)
