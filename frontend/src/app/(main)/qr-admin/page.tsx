@@ -151,7 +151,7 @@ export default function QRAdminPage() {
               시스템에 등록됩니다.
             </li>
             <li>
-              <strong>새 QR 생성:</strong> 필요 시 "새 QR 생성" 버튼으로 새로운
+              <strong>새 QR 생성:</strong> 필요 시 &quot;새 QR 생성&quot; 버튼으로 새로운
               QR 코드를 만들 수 있습니다.
             </li>
           </ol>
