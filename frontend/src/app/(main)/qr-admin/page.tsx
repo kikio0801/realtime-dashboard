@@ -23,24 +23,41 @@ export default function QRAdminPage() {
   // 클라이언트 사이드 초기화
   useEffect(() => {
     // [모바일 접속 주의사항]
-    // 1. 개발 서버가 --host 0.0.0.0 옵션으로 실행 중이어야 합니다.
-    // 2. PC와 모바일이 동일한 Wi-Fi 네트워크에 연결되어 있어야 합니다.
-    // 3. 브라우저 주소창에 localhost가 아닌 Network IP(예: 192.168.x.x)로 접속한 상태에서 QR을 생성해야 합니다.
+    // 1. PC와 모바일이 동일한 Wi-Fi 네트워크에 연결되어 있어야 합니다.
+    // 2. 브라우저 주소창에 localhost가 아닌 Network IP(예: 192.168.x.x)로 접속한 상태에서 QR을 생성해야 합니다.
     
+    interface SystemInfo {
+      local_ip: string;
+      all_ips: Array<{ interface: string; ip: string }>;
+      port: number;
+    }
+
     const initialize = async () => {
       let detectedBaseUrl = window.location.origin;
+      const apiHost = window.location.hostname;
       
-      try {
-        // 백엔드에서 서버의 로컬 IP 정보를 가져옵니다.
-        const response = await fetch('http://localhost:8000/api/system/info');
-        const data = await response.json();
-        
+      const processIpData = (data: SystemInfo) => {
         // 현재 localhost로 접속 중이라면, QR 코드는 편리하게 Network IP 주소로 생성합니다.
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
           detectedBaseUrl = `http://${data.local_ip}:3000`;
         }
+      };
+
+      try {
+        // 1차 시도: 현재 접속한 호스트 (IP 또는 localhost)
+        const response = await fetch(`http://${apiHost}:8000/api/system/info`);
+        const data = await response.json();
+        processIpData(data);
       } catch (error) {
-        console.error('IP 감지 실패:', error);
+        console.warn('Primary IP fetch failed, trying localhost fallback:', error);
+        try {
+          // 2차 시도 (PC 로컬용): localhost fallback
+          const response = await fetch(`http://localhost:8000/api/system/info`);
+          const data = await response.json();
+          processIpData(data);
+        } catch (fallbackError) {
+          console.error('All IP detection attempts failed:', fallbackError);
+        }
       }
 
       setQrState({

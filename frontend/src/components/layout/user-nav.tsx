@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { LogOut, Settings, User } from 'lucide-react'
 import Link from 'next/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -13,6 +14,21 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export function UserNav() {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <Button
+        variant="ghost"
+        className="relative h-8 w-8 rounded-full border-0 bg-[#5D4037] opacity-100"
+      />
+    )
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

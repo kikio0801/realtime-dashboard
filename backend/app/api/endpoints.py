@@ -47,18 +47,35 @@ async def update_patient_status(patient_id: str, update: PatientStatusUpdate):
 
 @router.get("/system/info")
 async def get_system_info():
-    """Get system information including local IP"""
+    """Get system information including all local IPs"""
     import socket
+    import psutil
+    
+    ips = []
     try:
-        # Get local IP
+        # Get all network interfaces
+        for interface, snics in psutil.net_if_addrs().items():
+            for snic in snics:
+                if snic.family == socket.AF_INET and not snic.address.startswith("127."):
+                    ips.append({
+                        "interface": interface,
+                        "ip": snic.address
+                    })
+        
+        # Primary IP (the one used for internet access)
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        local_ip = s.getsockname()[0]
+        s.settimeout(0.1)
+        try:
+            s.connect(("8.8.8.8", 80))
+            primary_ip = s.getsockname()[0]
+        except Exception:
+            primary_ip = ips[0]["ip"] if ips else "localhost"
         s.close()
     except Exception:
-        local_ip = "localhost"
+        primary_ip = "localhost"
         
     return {
-        "local_ip": local_ip,
+        "local_ip": primary_ip,
+        "all_ips": ips,
         "port": 8000
     }

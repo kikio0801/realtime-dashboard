@@ -112,14 +112,9 @@
 ```text
 realtime-dashboard/
 ├── frontend/             # Next.js 프론트엔드 (React 19, Tailwind CSS)
-│   ├── src/              # 컴포넌트, 라우팅, 스타일 소스
-│   └── ...
 ├── backend/              # FastAPI 백엔드
-│   ├── app/              # API 및 비즈니스 로직
-│   └── ...
 ├── analytics/            # Pandas 기반 데이터 처리 및 분석 모듈
-│   ├── pandas_logic.py   # 데이터 분석 핵심 로직
-│   └── ...
+├── scripts/              # 프로젝트 편의 기능 및 유틸리티 스크립트
 └── ui-flow-assets/       # README용 UI 스크린샷 리소스
 ```
 
@@ -140,11 +135,11 @@ cd backend
 uv venv
 # 패키지 설치 (최초 1회)
 uv pip install -r requirements.txt
-# 서버 실행 (네트워크 접속을 위해 --host 0.0.0.0 권장)
-uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# 서버 실행
+uv run uvicorn main:app --reload
 ```
 
-> **단축 스크립트 실행 (선택)**: `backend` 폴더 내의 `run_server.bat` 파일을 더블 클릭하면 간편하게 서버를 띄울 수 있습니다 (사전에 패키지가 설치되어 있어야 합니다).
+> **단축 스크립트 실행 (선택)**: `backend` 폴더 내의 `run_server.bat` 파일을 더블 클릭하면 간편하게 서버를 띄울 수 있습니다.
 
 ### 2. 프론트엔드 실행
 새로운 터미널을 열고 다음을 실행합니다.
@@ -152,13 +147,12 @@ uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```bash
 cd frontend
 pnpm install
-# 이제 자동으로 --host 0.0.0.0으로 실행되어 외부 기기 접속이 가능하며, QR 코드도 자동으로 IP를 감지합니다.
 pnpm dev
 ```
 
-### 💡 모바일 접속이 안 되시나요? (공용 와이파이/카페 등)
-공공장소의 와이파이나 '공용 네트워크' 환경에서는 윈도우 방화벽이 모바일 접속을 차단할 수 있습니다. 
-이 경우 **`scripts/open_firewall.bat`** 파일을 **[관리자 권한으로 실행]**해 주세요. 자동으로 3000번(프론트)과 8000번(백엔드) 포트를 열어줍니다.
+### 💡 모바일 접속 관련 참고
+1. PC와 핸드폰이 같은 WIFI를 사용해야 합니다.
+2. **공격적인 방화벽 환경(공용 Wi-Fi, 기업 네트워크)**에서는 기기 간 통신이 차단되어 QR 로그인이 작동하지 않을 수 있습니다. 이 경우 **모바일 핫스팟** 사용을 권장하며, 연결이 불안정할 경우 PC 브라우저에서 직접 테스트해 주세요.
 
 ## 📄 라이선스 (License)
 
