@@ -14,6 +14,7 @@ const PATIENTS_KEY = 'smart_pulse_patients'
  */
 const getPatients = (): Patient[] => {
   try {
+    if (typeof window === 'undefined') return []
     const data = localStorage.getItem(PATIENTS_KEY)
     return data ? JSON.parse(data) : []
   } catch (error) {
@@ -27,7 +28,9 @@ const getPatients = (): Patient[] => {
  * Save patients to localStorage
  */
 const savePatients = (patients: Patient[]): void => {
-  localStorage.setItem(PATIENTS_KEY, JSON.stringify(patients))
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(PATIENTS_KEY, JSON.stringify(patients))
+  }
 }
 
 /**
@@ -210,5 +213,7 @@ export async function deletePatient(id: string): Promise<void> {
  * Clear all patient data (for testing/reset)
  */
 export function clearPatients(): void {
-  localStorage.removeItem(PATIENTS_KEY)
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(PATIENTS_KEY)
+  }
 }

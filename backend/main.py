@@ -7,8 +7,8 @@ app = FastAPI(title="Realtime Dashboard API", version="0.1.0")
 # CORS middleware for frontend communication
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],  # Vite default port
-    allow_credentials=True,
+    allow_origins=["*"],  # Allow all for local network development
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

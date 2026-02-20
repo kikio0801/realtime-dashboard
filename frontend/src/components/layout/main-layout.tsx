@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { useSidebarStore } from '@/stores'
 import { Header } from './header'
@@ -8,11 +11,20 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const { isCollapsed } = useSidebarStore()
+  const { isOpen, isCollapsed, setOpen } = useSidebarStore()
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [isOpen, setOpen])
 
   return (
     <div className="relative min-h-screen">
-      <Sidebar />
       <div
         className={cn(
           'flex min-h-screen flex-col transition-all duration-300',
@@ -22,6 +34,18 @@ export function MainLayout({ children }: MainLayoutProps) {
         <Header />
         <main className="flex-1 p-4 lg:p-6">{children}</main>
       </div>
+
+      {/* Sidebar Overlay - Only visible on mobile/tablet when sidebar is open */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-90 bg-black/50 lg:hidden"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+          role="presentation"
+        />
+      )}
+
+      <Sidebar />
     </div>
   )
 }

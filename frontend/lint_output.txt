@@ -1,0 +1,6 @@
+
+> frontend@0.1.0 lint C:\Users\kikio\OneDrive\Desktop\dev\realtime-dashboard\frontend
+> next lint
+
+Invalid project directory provided, no such directory: C:\Users\kikio\OneDrive\Desktop\dev\realtime-dashboard\frontend\lint
+ ELIFECYCLE  Command failed with exit code 1.

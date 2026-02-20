@@ -4,6 +4,8 @@ API endpoints for patient management
 from fastapi import APIRouter, HTTPException
 from app.models import Patient, PatientStatusUpdate
 from app.services.patient_service import patient_service
+import socket
+import psutil
 
 
 router = APIRouter(prefix="/api", tags=["patients"])
@@ -43,3 +45,36 @@ async def update_patient_status(patient_id: str, update: PatientStatusUpdate):
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
     return patient
+
+
+@router.get("/system/info")
+async def get_system_info():
+    """Get system information including all local IPs"""
+    ips = []
+    try:
+        # Get all network interfaces
+        for interface, snics in psutil.net_if_addrs().items():
+            for snic in snics:
+                if snic.family == socket.AF_INET and not snic.address.startswith("127."):
+                    ips.append({
+                        "interface": interface,
+                        "ip": snic.address
+                    })
+        
+        # Primary IP (the one used for internet access)
+        primary_ip = None
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.settimeout(0.1)
+            try:
+                s.connect(("8.8.8.8", 80))
+                primary_ip = s.getsockname()[0]
+            except OSError:
+                primary_ip = ips[0]["ip"] if ips else "localhost"
+    except OSError:
+        primary_ip = "localhost"
+        
+    return {
+        "local_ip": primary_ip,
+        "all_ips": ips,
+        "port": 8000
+    }

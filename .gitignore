@@ -25,7 +25,9 @@ dist-ssr
 
 # Environment variables
 .env
-.env.local
+.env.*
+**/.env
+**/.env.*
 
 # Python
 **/__pycache__/

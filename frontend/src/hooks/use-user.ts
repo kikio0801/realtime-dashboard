@@ -11,6 +11,7 @@ export interface UserInfo {
  */
 export function useUser() {
   const [user, setUser] = useState<UserInfo | null>(() => {
+    if (typeof window === 'undefined') return null
     const key = localStorage.getItem('user_key')
     const name = localStorage.getItem('user_name')
 

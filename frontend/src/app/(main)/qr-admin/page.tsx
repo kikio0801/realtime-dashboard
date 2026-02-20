@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+"use client"
+
+import { useState, useEffect } from 'react'
 import QRCode from 'react-qr-code'
 import { v4 as uuidv4 } from 'uuid'
 import { RefreshCw, Copy, Check } from 'lucide-react'
@@ -7,27 +8,87 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 
-export const Route = createFileRoute('/qr-admin')({
-  component: QRAdminPage,
-})
-
-function QRAdminPage() {
-  const [qrKey, setQrKey] = useState<string>(() => uuidv4())
+export default function QRAdminPage() {
+  const [qrState, setQrState] = useState<{
+    key: string;
+    baseUrl: string;
+    mounted: boolean;
+  }>({
+    key: '',
+    baseUrl: '',
+    mounted: false
+  })
   const [copied, setCopied] = useState(false)
 
-  // Generate QR URL
-  const baseUrl = __APP_URL__ || window.location.origin
-  const qrUrl = `${baseUrl}/join?key=${qrKey}`
+  // 클라이언트 사이드 초기화
+  useEffect(() => {
+    // [모바일 접속 주의사항]
+    // 1. PC와 모바일이 동일한 Wi-Fi 네트워크에 연결되어 있어야 합니다.
+    // 2. 브라우저 주소창에 localhost가 아닌 Network IP(예: 192.168.x.x)로 접속한 상태에서 QR을 생성해야 합니다.
+    
+    interface SystemInfo {
+      local_ip: string;
+      all_ips: Array<{ interface: string; ip: string }>;
+      port: number;
+    }
 
-  // Generate new QR code
+    const initialize = async () => {
+      let detectedBaseUrl = window.location.origin;
+      const apiHost = window.location.hostname;
+      
+      const processIpData = (data: SystemInfo) => {
+        // 현재 localhost로 접속 중이라면, QR 코드는 편리하게 Network IP 주소로 생성합니다.
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          const protocol = window.location.protocol;
+          const port = window.location.port ? `:${window.location.port}` : '';
+          detectedBaseUrl = `${protocol}//${data.local_ip}${port}`;
+        }
+      };
+
+      try {
+        // 1차 시도: 현재 접속한 호스트 (IP 또는 localhost)
+        const response = await fetch(`http://${apiHost}:8000/api/system/info`);
+        const data = await response.json();
+        processIpData(data);
+      } catch (error) {
+        console.warn('Primary IP fetch failed, trying localhost fallback:', error);
+        try {
+          // 2차 시도 (PC 로컬용): localhost fallback
+          const response = await fetch(`http://localhost:8000/api/system/info`);
+          const data = await response.json();
+          processIpData(data);
+        } catch (fallbackError) {
+          console.error('All IP detection attempts failed:', fallbackError);
+        }
+      }
+
+      setQrState({
+        key: uuidv4(),
+        baseUrl: detectedBaseUrl,
+        mounted: true
+      })
+    };
+
+    const timeout = setTimeout(initialize, 0)
+    return () => clearTimeout(timeout)
+  }, [])
+
+  const { key: qrKey, baseUrl, mounted } = qrState
+  
+  // QR 코드 URL 생성
+  const qrUrl = mounted ? `${baseUrl}/join?key=${qrKey}` : ''
+
+  // 새로운 QR 코드 생성
   const handleGenerateNew = () => {
-    const newKey = uuidv4()
-    setQrKey(newKey)
+    setQrState(prev => ({
+      ...prev,
+      key: uuidv4()
+    }))
     setCopied(false)
     toast.success('새로운 QR 코드가 생성되었습니다!')
   }
 
-  // Copy URL to clipboard
+  // URL을 클립보드에 복사
   const handleCopyUrl = async () => {
     try {
       await navigator.clipboard.writeText(qrUrl)
@@ -127,7 +188,7 @@ function QRAdminPage() {
               시스템에 등록됩니다.
             </li>
             <li>
-              <strong>새 QR 생성:</strong> 필요 시 "새 QR 생성" 버튼으로 새로운
+              <strong>새 QR 생성:</strong> 필요 시 &quot;새 QR 생성&quot; 버튼으로 새로운
               QR 코드를 만들 수 있습니다.
             </li>
           </ol>
