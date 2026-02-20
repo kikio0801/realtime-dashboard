@@ -44,8 +44,9 @@
 ### Frontend
 | 분류 | 기술 |
 | :--- | :--- |
-| **Framework** | [Next.js 16](https://nextjs.org/) (App Router, **React Compiler 활성화**) + [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) |
-| **Styling** | [Tailwind CSS 3](https://tailwindcss.com/) + Shadcn UI (Customized) |
+| **Framework** | [Next.js 16](https://nextjs.org/) (App Router) + [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) |
+| **Optimization** | **[React Compiler](https://react.dev/learn/react-compiler)** 활성화 (코드 최적화 자동화) |
+| **Styling** | [Tailwind CSS 4](https://tailwindcss.com/) + Shadcn UI (Customized) |
 | **State Mgt** | [Zustand](https://zustand-demo.pmnd.rs/) |
 
 ### Infrastructure & Tools
