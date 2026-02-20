@@ -1,6 +1,6 @@
 /**
  * API Client for communicating with FastAPI backend
- * Base URL is /api which will be proxied to http://127.0.0.1:8000/api by Vite
+ * Base URL is /api which will be proxied to http://127.0.0.1:8000/api by Next.js
  */
 
 const API_BASE_URL = '/api'

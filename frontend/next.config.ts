@@ -6,6 +6,14 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   // 로컬 네트워크(IP) 접속 시 발생하는 Cross Origin 경고를 방지합니다.
   allowedDevOrigins: ['localhost:3000'],
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://127.0.0.1:8000/api/:path*',
+      },
+    ];
+  },
   experimental: {
   },
 };
