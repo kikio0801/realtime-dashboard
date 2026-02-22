@@ -8,27 +8,27 @@ import socket
 import psutil
 
 
-router = APIRouter(prefix="/api", tags=["patients"])
+router = APIRouter(prefix="/api", tags=["환자 관리"])
 
 
-@router.get("/patients", response_model=list[Patient])
+@router.get("/patients", response_model=list[Patient], summary="전체 환자 목록 조회")
 async def get_all_patients():
-    """Get all patients"""
+    """모든 환자의 기본 정보를 조회합니다."""
     return patient_service.get_all()
 
 
-@router.get("/patients/{patient_id}", response_model=Patient)
+@router.get("/patients/{patient_id}", response_model=Patient, summary="특정 환자 상세 상세 정보 조회")
 async def get_patient(patient_id: str):
-    """Get patient by ID"""
+    """환자 ID를 통해 특정 환자의 상세 정보를 조회합니다."""
     patient = patient_service.get_by_id(patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
     return patient
 
 
-@router.get("/nurses/{nurse_key}/patients", response_model=list[Patient])
+@router.get("/nurses/{nurse_key}/patients", response_model=list[Patient], summary="담당 간호사별 환자 목록 조회")
 async def get_nurse_patients(nurse_key: str):
-    """Get all patients assigned to a specific nurse"""
+    """특정 간호사에게 배정된 환자 목록을 조회합니다. 데이터가 없으면 초기 데이터를 생성합니다."""
     patients = patient_service.get_by_nurse(nurse_key)
     
     # Initialize patients if empty
@@ -38,18 +38,18 @@ async def get_nurse_patients(nurse_key: str):
     return patients
 
 
-@router.patch("/patients/{patient_id}/status", response_model=Patient)
+@router.patch("/patients/{patient_id}/status", response_model=Patient, summary="환자 상태 업데이트")
 async def update_patient_status(patient_id: str, update: PatientStatusUpdate):
-    """Update patient status"""
+    """환자의 현재 상태(stable, warning, critical)를 수동으로 업데이트합니다."""
     patient = patient_service.update_status(patient_id, update.status)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
     return patient
 
 
-@router.get("/system/info")
+@router.get("/system/info", summary="시스템 상태 및 접속 정보 조회")
 async def get_system_info():
-    """Get system information including all local IPs"""
+    """서버의 로컬 IP 주소와 포트 정보를 조회합니다. 모바일 접속 시 IP 확인용으로 사용됩니다."""
     ips = []
     try:
         # Get all network interfaces
