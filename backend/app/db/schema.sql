@@ -68,9 +68,7 @@ CREATE TABLE IF NOT EXISTS vitals_log (
 CREATE INDEX IF NOT EXISTS idx_vitals_patient_time ON vitals_log(patient_id, recorded_at DESC);
 
 -- 초기 데이터 샘플 (Seeding)
-INSERT INTO medical_staff (name, email, department, qr_hash) 
-VALUES ('윤지우', 'jiwoo@example.com', '순환기내과', 'staff_qr_dev_01')
-ON CONFLICT (qr_hash) DO NOTHING;
+-- 의료진 정보는 QR 로그인 시 자동 생성되므로 수동 시드를 생략합니다.
 
 INSERT INTO patients (name, age, gender, bed_number, status) 
 VALUES 

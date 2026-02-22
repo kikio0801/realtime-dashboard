@@ -47,8 +47,9 @@ export const registerUser = async (
 
   if (profileError) {
     console.error('Profile creation error:', profileError)
-    // If profile creation fails, we might still be logged in securely, 
-    // but the app needs the profile. Good for debugging.
+    // Sign out to prevent user from being logged in without a profile
+    await supabase.auth.signOut()
+    throw new Error('프로필 등록에 실패했습니다.')
   }
 
   // Return formatted user

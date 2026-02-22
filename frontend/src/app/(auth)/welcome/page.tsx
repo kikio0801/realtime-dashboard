@@ -9,8 +9,8 @@ import { useUser } from '@/hooks/use-user'
 
 export default function WelcomePage() {
   const router = useRouter()
-  const { user } = useUser()
-  const userName = user?.name || 'Guest'
+  const { user, isLoading } = useUser()
+  const userName = isLoading ? '...' : (user?.name || 'Guest')
 
   // Auto-redirect after 3 seconds
   useEffect(() => {
