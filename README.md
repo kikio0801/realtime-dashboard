@@ -7,7 +7,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Pandas](https://img.shields.io/badge/Pandas-2.2-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
-[![WebSocket](https://img.shields.io/badge/WebSocket-Realtime-010101?logo=socket.io&logoColor=white)](#)
+[![WebSocket](https://img.shields.io/badge/WebSocket-Realtime-010101?logo=socket.io&logoColor=white)](#🌐-실시간-아키텍처-hybrid-realtime-strategy)
 [![CodeRabbit](https://img.shields.io/badge/CodeRabbit-FF5A00?logoColor=white)](https://coderabbit.ai/)
 [![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-red.svg)](#-라이선스-license)
 
@@ -37,8 +37,6 @@
   - **골든타임 확보를 위한 시계열 예측**: 단순 현재 수치 조회를 넘어, Pandas의 시계열 분석 알고리즘을 통해 환자의 바이탈 변화 추이를 계산합니다. 데이터의 기울기와 변동성을 분석하여 향후 5~10분 내 위험 수치 도달 가능성을 선제적으로 예측합니다.
   - **지능형 위험 징후 조기 탐지 (Early Warning System)**: 이동 평균(Moving Average) 및 비정상 패턴 감지 로직을 적용하여, 육안으로 확인하기 어려운 미세한 상태 악화 흐름을 포착하고 의료진에게 즉각적인 예보 알림을 제공합니다.
   - **데이터 기반 의사결정 지원**: 과거 패턴과 현재 흐름을 결합하여 '단순 알람'이 아닌 '예측 기반 가이드'를 제시함으로써 의료진의 신속하고 정확한 판단을 돕습니다.
-- **QR 로그인 (Concept)**:
-  - 의료진이 QR 코드를 스캔하여 담당 환자 목록에 빠르게 접근하는 간편 로그인 시스템.
 - **담당 간호사 배정 시스템**:
   - 간호사별 담당 환자 필터링 및 관리 최적화.
 - **데이터 기반 백엔드**:
@@ -158,7 +156,7 @@ uv run uvicorn main:app --reload
 ```
 
 > **API 문서 (Swagger UI)**: 서버가 실행 중일 때 [http://localhost:8000/docs](http://localhost:8000/docs)에서 스웨거 API 문서를 확인할 수 있습니다. FastAPI는 Pydantic 모델을 기반으로 이 문서를 자동으로 생성합니다.
-
+>
 > **단축 스크립트 실행 (선택)**: `backend` 폴더 내의 `run_server.bat` 파일을 더블 클릭하면 간편하게 서버를 띄울 수 있습니다.
 
 ### 2. 프론트엔드 실행
