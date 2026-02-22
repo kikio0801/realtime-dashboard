@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS patients (
     gender TEXT,
     bed_number TEXT NOT NULL,
     status TEXT DEFAULT 'stable' CHECK (status IN ('stable', 'warning', 'critical')),
+    diagnosis TEXT,
     admission_date TIMESTAMPTZ DEFAULT NOW(),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(name, bed_number)
@@ -38,11 +39,12 @@ CREATE TABLE IF NOT EXISTS staff_patients (
 CREATE TABLE IF NOT EXISTS vitals_log (
     id BIGSERIAL PRIMARY KEY,
     patient_id UUID REFERENCES patients(id) ON DELETE CASCADE,
-    heart_rate INTEGER CHECK (heart_rate > 0 AND heart_rate <= 300),
-    blood_pressure_sys INTEGER CHECK (blood_pressure_sys >= 30 AND blood_pressure_sys <= 300),
-    blood_pressure_dia INTEGER CHECK (blood_pressure_dia >= 10 AND blood_pressure_dia <= 200),
-    oxygen_level INTEGER CHECK (oxygen_level >= 0 AND oxygen_level <= 100),
-    status TEXT,
+    heart_rate NUMERIC CHECK (heart_rate > 0 AND heart_rate <= 300),
+    blood_pressure_sys NUMERIC CHECK (blood_pressure_sys >= 30 AND blood_pressure_sys <= 300),
+    blood_pressure_dia NUMERIC CHECK (blood_pressure_dia >= 10 AND blood_pressure_dia <= 200),
+    oxygen_level NUMERIC CHECK (oxygen_level >= 0 AND oxygen_level <= 100),
+    temperature NUMERIC CHECK (temperature >= 30 AND temperature <= 45),
+    status TEXT CHECK (status IN ('normal', 'abnormal', 'critical')),
     recorded_at TIMESTAMPTZ DEFAULT NOW()
 );
 
