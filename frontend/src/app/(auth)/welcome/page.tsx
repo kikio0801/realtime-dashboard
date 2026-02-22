@@ -14,12 +14,14 @@ export default function WelcomePage() {
 
   // Auto-redirect after 3 seconds
   useEffect(() => {
+    if (isLoading) return;
+
     const timer = setTimeout(() => {
       router.push('/')
     }, 3000)
 
     return () => clearTimeout(timer)
-  }, [router])
+  }, [router, isLoading])
 
   const handleContinue = () => {
     router.push('/')

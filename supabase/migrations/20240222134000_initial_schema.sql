@@ -29,6 +29,11 @@ USING (auth.uid() = id);
 
 CREATE POLICY "Allow users to update their own profile" 
 ON medical_staff FOR UPDATE 
+USING (auth.uid() = id)
+WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "Allow users to delete their own profile" 
+ON medical_staff FOR DELETE 
 USING (auth.uid() = id);
 
 -- 2. 환자 테이블
@@ -52,6 +57,14 @@ CREATE TABLE IF NOT EXISTS staff_patients (
     assigned_at TIMESTAMPTZ DEFAULT NOW(),
     PRIMARY KEY (staff_id, patient_id)
 );
+
+ALTER TABLE staff_patients ENABLE ROW LEVEL SECURITY;
+GRANT ALL ON TABLE staff_patients TO anon, authenticated;
+
+CREATE POLICY "Allow staff to manage their own assignments"
+ON staff_patients FOR ALL
+USING (auth.uid() = staff_id)
+WITH CHECK (auth.uid() = staff_id);
 
 -- 4. 생체 신호 로그 테이블
 CREATE TABLE IF NOT EXISTS vitals_log (

@@ -35,6 +35,20 @@ export const registerUser = async (
     throw new Error('인증에 실패했습니다.')
   }
 
+  // 1.5. Check for existing qr_hash to prevent UNIQUE constraint violation
+  const { data: existingUser } = await supabase
+    .from('medical_staff')
+    .select('id')
+    .eq('qr_hash', trimmedKey)
+    .single()
+
+  if (existingUser) {
+    // If we want to support re-login, we'd need a different strategy.
+    // For now, prevent overwriting/erroring out silently.
+    await supabase.auth.signOut()
+    throw new Error('이미 등록된 QR 코드입니다.')
+  }
+
   // 2. Save profile to Supabase
   const { error: profileError } = await supabase
     .from('medical_staff')
@@ -65,16 +79,26 @@ export const registerUser = async (
  * Get current authenticated user session
  */
 export const getCurrentUser = async (): Promise<User | null> => {
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+  
+  if (sessionError) {
+    console.error('Supabase session error:', sessionError)
+    return null
+  }
   
   if (!session?.user) return null
 
   // Fetch profile to get name and qr_hash
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('medical_staff')
     .select('qr_hash, name, created_at')
     .eq('id', session.user.id)
     .single()
+
+  if (profileError) {
+    console.error(`Profile fetch error for user ${session.user.id}:`, profileError)
+    return null
+  }
 
   if (!profile) return null
 
