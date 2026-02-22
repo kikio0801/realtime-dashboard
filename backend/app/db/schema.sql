@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS staff_patients (
 -- 4. 생체 신호 로그 테이블
 CREATE TABLE IF NOT EXISTS vitals_log (
     id BIGSERIAL PRIMARY KEY,
-    patient_id UUID REFERENCES patients(id) ON DELETE CASCADE,
-    heart_rate NUMERIC CHECK (heart_rate > 0 AND heart_rate <= 300),
+    patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+    heart_rate NUMERIC CHECK (heart_rate >= 0 AND heart_rate <= 300),
     blood_pressure_sys NUMERIC CHECK (blood_pressure_sys >= 30 AND blood_pressure_sys <= 300),
     blood_pressure_dia NUMERIC CHECK (blood_pressure_dia >= 10 AND blood_pressure_dia <= 200),
     oxygen_level NUMERIC CHECK (oxygen_level >= 0 AND oxygen_level <= 100),

@@ -8,6 +8,11 @@ import socket
 import psutil
 
 
+import os
+
+# Get port from environment or default to 8000
+SERVER_PORT = int(os.getenv("PORT", 8000))
+
 router = APIRouter(prefix="/api", tags=["환자 관리"])
 
 
@@ -17,7 +22,7 @@ async def get_all_patients():
     return patient_service.get_all()
 
 
-@router.get("/patients/{patient_id}", response_model=Patient, summary="특정 환자 상세 상세 정보 조회")
+@router.get("/patients/{patient_id}", response_model=Patient, summary="특정 환자 상세 정보 조회")
 async def get_patient(patient_id: str):
     """환자 ID를 통해 특정 환자의 상세 정보를 조회합니다."""
     patient = patient_service.get_by_id(patient_id)
@@ -26,16 +31,16 @@ async def get_patient(patient_id: str):
     return patient
 
 
+@router.post("/nurses/{nurse_key}/patients/seed", response_model=list[Patient], summary="초기 환자 데이터 생성")
+async def seed_nurse_patients(nurse_key: str):
+    """테스트용 초기 환자 데이터를 생성합니다."""
+    return patient_service.seed_patients(nurse_key)
+
+
 @router.get("/nurses/{nurse_key}/patients", response_model=list[Patient], summary="담당 간호사별 환자 목록 조회")
 async def get_nurse_patients(nurse_key: str):
-    """특정 간호사에게 배정된 환자 목록을 조회합니다. 데이터가 없으면 초기 데이터를 생성합니다."""
-    patients = patient_service.get_by_nurse(nurse_key)
-    
-    # Initialize patients if empty
-    if not patients:
-        patients = patient_service.seed_patients(nurse_key)
-    
-    return patients
+    """특정 간호사에게 배정된 환자 목록을 조회합니다."""
+    return patient_service.get_by_nurse(nurse_key)
 
 
 @router.patch("/patients/{patient_id}/status", response_model=Patient, summary="환자 상태 업데이트")
@@ -76,5 +81,5 @@ async def get_system_info():
     return {
         "local_ip": primary_ip,
         "all_ips": ips,
-        "port": 8000
+        "port": SERVER_PORT
     }

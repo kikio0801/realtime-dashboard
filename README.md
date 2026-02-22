@@ -7,7 +7,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Pandas](https://img.shields.io/badge/Pandas-2.2-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
-[![WebSocket](https://img.shields.io/badge/WebSocket-Realtime-010101?logo=socket.io&logoColor=white)](#🌐-실시간-아키텍처-hybrid-realtime-strategy)
+[![WebSocket](https://img.shields.io/badge/WebSocket-Realtime-010101?logo=socket.io&logoColor=white)](#실시간-아키텍처-hybrid-realtime-strategy)
 [![CodeRabbit](https://img.shields.io/badge/CodeRabbit-FF5A00?logoColor=white)](https://coderabbit.ai/)
 [![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-red.svg)](#-라이선스-license)
 
