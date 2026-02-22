@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { registerUser } from '@/lib/mock-api'
+import { useUser } from '@/hooks/use-user'
 
 function JoinForm() {
   const router = useRouter()
@@ -17,16 +18,15 @@ function JoinForm() {
   const [nickname, setNickname] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  // Check if user is already registered
-  useEffect(() => {
-    const existingKey = localStorage.getItem('user_key')
-    const existingName = localStorage.getItem('user_name')
+  const { isAuthenticated, isLoading: isAuthLoading } = useUser()
 
-    if (existingKey && existingName) {
+  // Check if user is already registered via Supabase session
+  useEffect(() => {
+    if (!isAuthLoading && isAuthenticated) {
       // User already registered, redirect to main silently
       router.push('/')
     }
-  }, [router])
+  }, [router, isAuthenticated, isAuthLoading])
 
 
   const handleJoin = async () => {
@@ -56,10 +56,6 @@ function JoinForm() {
     try {
       // Register user via mock API
       await registerUser(key, trimmedNickname)
-
-      // Save to localStorage
-      localStorage.setItem('user_key', key)
-      localStorage.setItem('user_name', trimmedNickname)
 
       // Redirect to welcome page
       router.push('/welcome')

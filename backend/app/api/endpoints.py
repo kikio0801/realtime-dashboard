@@ -13,7 +13,7 @@ import os
 # Get port from environment or default to 8000
 SERVER_PORT = int(os.getenv("PORT", 8000))
 
-router = APIRouter(prefix="/api", tags=["환자 관리"])
+router = APIRouter(tags=["환자 관리"])
 
 
 @router.get("/patients", response_model=list[Patient], summary="전체 환자 목록 조회")
