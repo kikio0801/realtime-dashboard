@@ -1,20 +1,16 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { PartyPopper } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useUser } from '@/hooks/use-user'
 
 export default function WelcomePage() {
   const router = useRouter()
-  const [userName, setUserName] = useState<string>('Guest')
-
-  useEffect(() => {
-    // Only access localStorage on client side
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setUserName(localStorage.getItem('user_name') || 'Guest')
-  }, [])
+  const { user } = useUser()
+  const userName = user?.name || 'Guest'
 
   // Auto-redirect after 3 seconds
   useEffect(() => {

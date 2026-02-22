@@ -10,12 +10,16 @@ export const api = axios.create({
   },
 })
 
-// Request interceptor - 인증 토큰 추가
+import { createClient } from '@/lib/supabase/client'
+
+// Request interceptor - 인증 토큰 추가 (Supabase 세션 연동)
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+  async (config) => {
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    
+    if (session?.access_token) {
+      config.headers.Authorization = `Bearer ${session.access_token}`
     }
     return config
   },
@@ -25,10 +29,12 @@ api.interceptors.request.use(
 // Response interceptor - 에러 처리
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    // 401 Unauthorized 시 Supabase 세션 초기화 및 로그인 이동
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      window.location.href = '/login'
+      const supabase = createClient()
+      await supabase.auth.signOut()
+      window.location.href = '/join'
     }
     return Promise.reject(error)
   }

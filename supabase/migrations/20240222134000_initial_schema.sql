@@ -1,4 +1,5 @@
 -- 🏥 Realtime Dashboard Database Schema
+-- Initial Migration synchronized from backend/app/db/schema.sql
 
 -- 1. 의료진 테이블 (Supabase Anonymous Auth 연동)
 CREATE TABLE IF NOT EXISTS medical_staff (

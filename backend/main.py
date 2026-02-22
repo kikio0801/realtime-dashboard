@@ -1,6 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import router as patient_router
+from app.api.endpoints import router as endpoint_router
 
 app = FastAPI(
     title="실시간 대시보드 API",
@@ -17,8 +17,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include patient API routes
-app.include_router(patient_router)
+# Create a central API router
+api_router = APIRouter(prefix="/api")
+
+# Include all endpoints into the main API router
+api_router.include_router(endpoint_router)
+
+# Include the central API router into the main app
+app.include_router(api_router)
 
 @app.get("/", summary="API 루트")
 def read_root():

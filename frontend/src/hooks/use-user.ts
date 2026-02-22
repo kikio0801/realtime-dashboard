@@ -1,46 +1,65 @@
 import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { getCurrentUser } from '@/lib/mock-api'
 
 export interface UserInfo {
   key: string
   name: string
+  id?: string
 }
+
+const supabase = createClient()
 
 /**
  * Custom hook to manage user authentication state
- * Uses localStorage to persist user information
+ * Uses Supabase Auth to persist user information
  */
 export function useUser() {
-  const [user, setUser] = useState<UserInfo | null>(() => {
-    if (typeof window === 'undefined') return null
-    const key = localStorage.getItem('user_key')
-    const name = localStorage.getItem('user_name')
+  const [user, setUser] = useState<UserInfo | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-    if (key && name) {
-      return { key, name }
-    }
-    return null
-  })
-
-  // Sync with localStorage changes
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const key = localStorage.getItem('user_key')
-      const name = localStorage.getItem('user_name')
-
-      if (key && name) {
-        setUser({ key, name })
+  const fetchSession = async () => {
+    try {
+      const currentUser = await getCurrentUser()
+      if (currentUser) {
+        setUser({
+          key: currentUser.key,
+          name: currentUser.name,
+          id: currentUser.id,
+        })
       } else {
         setUser(null)
       }
+    } catch (e) {
+      console.error('Session error', e)
+      setUser(null)
+    } finally {
+      setIsLoading(false)
     }
+  }
 
-    window.addEventListener('storage', handleStorageChange)
-    return () => window.removeEventListener('storage', handleStorageChange)
+  // Load initial session
+  useEffect(() => {
+    fetchSession()
+
+    // Listen to Supabase auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event) => {
+        if (event === 'SIGNED_OUT') {
+          setUser(null)
+        } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          fetchSession()
+        }
+      }
+    )
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
-  const logout = () => {
-    localStorage.removeItem('user_key')
-    localStorage.removeItem('user_name')
+  const logout = async () => {
+    await supabase.auth.signOut()
     setUser(null)
     window.location.href = '/join'
   }
@@ -48,6 +67,8 @@ export function useUser() {
   return {
     user,
     isAuthenticated: !!user,
+    isLoading,
     logout,
   }
 }
+

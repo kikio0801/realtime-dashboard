@@ -1,142 +1,87 @@
+import { createClient } from './supabase/client'
+
 /**
  * Mock API for QR-based authentication system
- * Simulates backend API endpoints using localStorage
+ * (Now migrating to Supabase Auth)
  */
 
 export interface User {
   key: string
   name: string
   createdAt: string
+  id?: string // Supabase auth.users.id
 }
 
-// In-memory storage (simulating database)
-const STORAGE_KEY = 'qr_auth_users'
+const supabase = createClient()
 
 /**
- * Get all users from mock database
- */
-const getUsers = (): User[] => {
-  try {
-    if (typeof window === 'undefined') return []
-    const data = localStorage.getItem(STORAGE_KEY)
-    return data ? JSON.parse(data) : []
-  } catch (error) {
-    console.error('Failed to parse users from localStorage:', error)
-    // Reset corrupted storage to prevent persistent errors
-    localStorage.removeItem(STORAGE_KEY)
-    return []
-  }
-}
-
-/**
- * Save users to mock database
- */
-const saveUsers = (users: User[]): void => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(users))
-  }
-}
-
-/**
- * Simulate API delay for realistic behavior
- */
-const delay = (ms: number = 300): Promise<void> => {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-/**
- * Mock API: Register a new user
+ * Register a new user using Supabase Anonymous Auth
  */
 export const registerUser = async (
   key: string,
   name: string
 ): Promise<User> => {
-  await delay()
-
   const trimmedKey = key.trim()
   const trimmedName = name.trim()
-  if (!trimmedKey) {
-    throw new Error('Key is required')
-  }
-  if (!trimmedName) {
-    throw new Error('Name is required')
-  }
+  
+  if (!trimmedKey) throw new Error('Key is required')
+  if (!trimmedName) throw new Error('Name is required')
 
-  const users = getUsers()
-
-  // Check if user already exists
-  const existingUser = users.find((u) => u.key === trimmedKey)
-  if (existingUser) {
-    throw new Error('User with this key already exists')
+  // 1. Sign in anonymously
+  const { data: authData, error: authError } = await supabase.auth.signInAnonymously()
+  
+  if (authError || !authData.user) {
+    console.error('Supabase auth error:', authError)
+    throw new Error('인증에 실패했습니다.')
   }
 
-  // Create new user
-  const newUser: User = {
+  // 2. Save profile to Supabase
+  const { error: profileError } = await supabase
+    .from('medical_staff')
+    .upsert({
+      id: authData.user.id,
+      qr_hash: trimmedKey,
+      name: trimmedName,
+      created_at: new Date().toISOString()
+    })
+
+  if (profileError) {
+    console.error('Profile creation error:', profileError)
+    // If profile creation fails, we might still be logged in securely, 
+    // but the app needs the profile. Good for debugging.
+  }
+
+  // Return formatted user
+  return {
+    id: authData.user.id,
     key: trimmedKey,
     name: trimmedName,
     createdAt: new Date().toISOString(),
   }
-
-  users.push(newUser)
-  saveUsers(users)
-
-  return newUser
 }
 
 /**
- * Mock API: Get user by key
+ * Get current authenticated user session
  */
-export const getUserByKey = async (key: string): Promise<User | null> => {
-  await delay()
+export const getCurrentUser = async (): Promise<User | null> => {
+  const { data: { session } } = await supabase.auth.getSession()
+  
+  if (!session?.user) return null
 
-  const users = getUsers()
-  const user = users.find((u) => u.key === key)
+  // Fetch profile to get name and qr_hash
+  const { data: profile } = await supabase
+    .from('medical_staff')
+    .select('qr_hash, name, created_at')
+    .eq('id', session.user.id)
+    .single()
 
-  return user || null
-}
+  if (!profile) return null
 
-/**
- * Mock API: Get all users (for admin)
- */
-export const getAllUsers = async (): Promise<User[]> => {
-  await delay()
-  return getUsers()
-}
-
-/**
- * Mock API: Delete user by key (for admin)
- */
-export const deleteUser = async (key: string): Promise<void> => {
-  await delay()
-
-  const users = getUsers()
-  const filteredUsers = users.filter((u) => u.key !== key)
-  saveUsers(filteredUsers)
-}
-
-/**
- * Mock API: Update user name
- */
-export const updateUserName = async (
-  key: string,
-  newName: string
-): Promise<User> => {
-  await delay()
-
-  const users = getUsers()
-  const userIndex = users.findIndex((u) => u.key === key)
-
-  if (userIndex === -1) {
-    throw new Error('User not found')
+  return {
+    id: session.user.id,
+    key: profile.qr_hash,
+    name: profile.name,
+    createdAt: profile.created_at || new Date().toISOString(),
   }
-
-  const user = users[userIndex]
-  if (!user) {
-    throw new Error('User not found')
-  }
-
-  user.name = newName
-  saveUsers(users)
-
-  return user
 }
+

@@ -5,8 +5,12 @@ import { Button } from '@/components/ui/button'
 import { RotateCcw } from 'lucide-react'
 
 export default function HomePage() {
-  const handleResetAuth = () => {
+  const handleResetAuth = async () => {
     // Clear all authentication data
+    const { createClient } = await import('@/lib/supabase/client')
+    const supabase = createClient()
+    await supabase.auth.signOut()
+
     localStorage.removeItem('user_key')
     localStorage.removeItem('user_name')
     // Clear registered users from mock API database
