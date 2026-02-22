@@ -35,3 +35,11 @@ dist-ssr
 **/*$py.class
 venv/
 .venv/
+
+# Custom scripts
+/scripts/
+
+# AI Agent Temporary Files
+pr_*.txt
+pr_*
+
