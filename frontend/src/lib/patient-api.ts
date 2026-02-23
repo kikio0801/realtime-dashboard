@@ -1,5 +1,5 @@
 /**
- * Real * API client for patient data management.
+ * Real API client for patient data management.
  * Replaces patient-mock-api logic with actual FastAPI backend calls
  */
 
