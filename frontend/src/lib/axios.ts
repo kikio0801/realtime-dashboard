@@ -41,6 +41,13 @@ api.interceptors.response.use(
 )
 
 // Generic fetcher for TanStack Query
+/**
+ * Generic fetcher function for TanStack Query.
+ * @template T - The expected response data type.
+ * @param {string} url - API endpoint URL.
+ * @param {AxiosRequestConfig} [config] - Optional Axios request configuration.
+ * @returns {Promise<T>} Promise resolving to the response data.
+ */
 export async function fetcher<T>(
   url: string,
   config?: AxiosRequestConfig
@@ -49,7 +56,11 @@ export async function fetcher<T>(
   return response.data
 }
 
-// Generic mutation helpers
+/**
+ * Helper for POST requests.
+ * @template T - Success response data type.
+ * @template D - Request body data type.
+ */
 export async function post<T, D = unknown>(
   url: string,
   data?: D,
@@ -59,6 +70,9 @@ export async function post<T, D = unknown>(
   return response.data
 }
 
+/**
+ * Helper for PUT requests.
+ */
 export async function put<T, D = unknown>(
   url: string,
   data?: D,
@@ -68,6 +82,9 @@ export async function put<T, D = unknown>(
   return response.data
 }
 
+/**
+ * Helper for PATCH requests.
+ */
 export async function patch<T, D = unknown>(
   url: string,
   data?: D,
@@ -77,6 +94,9 @@ export async function patch<T, D = unknown>(
   return response.data
 }
 
+/**
+ * Helper for DELETE requests.
+ */
 export async function del<T>(
   url: string,
   config?: AxiosRequestConfig

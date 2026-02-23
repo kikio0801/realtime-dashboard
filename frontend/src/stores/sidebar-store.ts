@@ -9,6 +9,10 @@ interface SidebarState {
   setCollapsed: (collapsed: boolean) => void
 }
 
+/**
+ * Sidebar state management store.
+ * Controls mobile menu visibility and desktop sidebar collapse state.
+ */
 export const useSidebarStore = create<SidebarState>()(
   persist(
     (set) => ({

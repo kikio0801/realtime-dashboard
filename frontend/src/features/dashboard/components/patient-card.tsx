@@ -17,6 +17,12 @@ interface PatientCardProps {
   onClick: () => void
 }
 
+/**
+ * Patient overview card component.
+ * Displays vital sign summaries and mini charts for a single patient.
+ * @param {PatientCardProps} props - Component properties.
+ * @returns {JSX.Element} Interactive patient card.
+ */
 export function PatientCard({ patient, onClick }: PatientCardProps) {
   const colors = STATUS_COLORS[patient.status]
 

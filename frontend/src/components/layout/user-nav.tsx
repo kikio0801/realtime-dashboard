@@ -1,6 +1,9 @@
+"use client"
+
 import { useState, useEffect } from 'react'
 import { LogOut, Settings, User } from 'lucide-react'
-import Link from 'next/link'
+import { toast } from 'sonner'
+import { useUser } from '@/hooks/use-user'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,19 +16,41 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+/**
+ * User navigation component for the header.
+ * Displays user avatar, dropdown menu with profile, settings, and logout options.
+ * Handles loading states and authentication actions.
+ */
 export function UserNav() {
   const [mounted, setMounted] = useState(false)
+  const { user, logout, isLoading } = useUser()
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 
+  const handleLogout = async () => {
+    const success = await logout()
+    if (!success) {
+      toast.error('로그아웃 중 오류가 발생했습니다. 다시 시도해 주세요.')
+    }
+  }
+
   if (!mounted) {
     return (
       <Button
         variant="ghost"
         className="relative h-8 w-8 rounded-full border-0 bg-[#5D4037] opacity-100"
+      />
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <Button
+        variant="ghost"
+        className="relative h-8 w-8 rounded-full border-0 bg-[#5D4037]/50 animate-pulse"
       />
     )
   }
@@ -40,7 +65,7 @@ export function UserNav() {
           <Avatar className="h-8 w-8 bg-transparent">
             {/* <AvatarImage src="/avatars/01.png" alt="@user" /> */}
             <AvatarFallback className="bg-transparent text-inherit">
-              U
+              {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -48,29 +73,25 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm leading-none font-medium">User Name</p>
+            <p className="text-sm leading-none font-medium">{user?.name || 'User'}</p>
             <p className="text-muted-foreground text-xs leading-none">
-              user@example.com
+              {user?.key ? `Key: ${user.key}` : 'anonymous'}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link href="/profile">
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </Link>
+          <DropdownMenuItem onClick={() => toast.info('아직 구현되지 않은 기능 입니다.')} className="cursor-pointer">
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </Link>
+          <DropdownMenuItem onClick={() => toast.info('아직 구현되지 않은 기능 입니다.')} className="cursor-pointer">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

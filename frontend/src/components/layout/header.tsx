@@ -1,8 +1,14 @@
+"use client"
+
 import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useSidebarStore } from '@/stores'
 import { UserNav } from './user-nav'
 
+/**
+ * Global header component.
+ * Provides a sticky navigation bar with a mobile menu toggle and user navigation.
+ */
 export function Header() {
   const { toggle } = useSidebarStore()
 

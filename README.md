@@ -3,7 +3,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Pandas](https://img.shields.io/badge/Pandas-2.2-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
@@ -24,7 +24,7 @@
 > **💡 개발 취지**
 >
 > 본 프로젝트는 실제 데이터베이스를 구축하는 대신 **Next.js(Frontend) - FastAPI(Backend) - Pandas(Data Processing)** 간의 유기적인 데이터 흐름을 실험하고 검증하는 데에 초점을 맞추었습니다.
-> 특히 헬스케어 데이터(환자 정보)를 다루는 로직을 구현함에 있어, 복잡한 인프라 설정 없이 코드 레벨의 **Mock Data**를 활용하여 개발 효율성을 높이고 파이프라인 구축에 집중했습니다.
+> 특히 헬스케어 데이터(환자 정보)를 다루는 로직을 구현함에 있어, **Supabase**와 **Pandas**를 연동하여 실제 서비스 환경에 최적화된 데이터 파이프라인 구축에 집중했습니다.
 
 ## ✨ 핵심 기능
 
@@ -35,7 +35,7 @@
 - **실시간 환자 모니터링**:
   - 활력 징후(Vital Signs) 실시간 조회 및 WebSocket 기반의 끊김 없는 실시간 그래프 시각화.
 - **Pandas 기반 실시간 미래 상태 예측 (Predictive Analytics)**:
-  - **골든타임 확보를 위한 시계열 예측 (Random Walk)**: 단순 현재 수치 조회를 넘어, Pandas의 시계열 분석 알고리즘을 통해 환자의 바이탈 변화 추이를 계산합니다. 데이터의 기울기와 변동성을 분석하여 향후 5~10분 내 위험 수치 도달 가능성을 선제적으로 예측합니다.
+  - **골든타임 확보를 위한 시계열 분석 및 예측 (Random Walk 알고리즘)**: 단순 현재 수치 조회를 넘어, Pandas의 시계열 분석 알고리즘을 통해 환자의 바이탈 변화 추이를 계산합니다. 데이터의 무작위성 속에서도 현재 상태가 미래의 기준이 되는 **Random Walk** 모델링을 적용하여 향후 5~10분 내 위험 수치 도달 가능성을 선제적으로 예측합니다.
   - **지능형 위험 징후 조기 탐지 (Early Warning System)**: 이동 평균(Moving Average) 및 비정상 패턴 감지 로직을 적용하여, 육안으로 확인하기 어려운 미세한 상태 악화 흐름을 포착하고 의료진에게 즉각적인 예보 알림을 제공합니다.
   - **데이터 기반 의사결정 지원**: 과거 패턴과 현재 흐름을 결합하여 '단순 알람'이 아닌 '예측 기반 가이드'를 제시함으로써 의료진의 신속하고 정확한 판단을 돕습니다.
 - **담당 간호사 배정 시스템**:
@@ -58,7 +58,7 @@
 
 | 분류 | 기술 |
 | :--- | :--- |
-| **Database** | [Supabase](https://supabase.com/) (추후 연동 예정) |
+| **Database** | [Supabase](https://supabase.com/) |
 | **Code Review** | [CodeRabbit](https://coderabbit.ai/) (AI 자동 코드 리뷰) |
 
 ### Backend
@@ -68,6 +68,26 @@
 | **Framework** | [FastAPI](https://fastapi.tiangolo.com/) |
 | **Data Processing** | [Pandas](https://pandas.pydata.org/) (Analytics 모듈) |
 | **Server(Execution Engine)** | [Uvicorn](https://www.uvicorn.org/) |
+
+## 🎨 타이포그래피 (Typography)
+
+본 프로젝트는 **'A2z' (에이투지체)** 폰트를 기본 서체로 사용합니다.
+
+- **Licensing**: 상업적 이용이 가능한 무료 폰트입니다. (출처: [눈누 A2z](https://noonnu.cc/font_page/1778))
+- **Design Philosophy**: 한글은 현대적이고 도회적인 인상의 **A2z**를, 영문과 숫자는 기하학적 산세리프 서체인 **Outfit**을 사용하여 완벽한 조화를 이룹니다.
+  > **Note**: A2z 폰트는 Outfit 폰트를 기반으로 설계되었으며, 두 서체를 혼용해도 이질감 없이 하나의 서체처럼 자연스러운 시각적 흐름을 제공합니다.
+- **Switching**: `frontend/src/app/globals.css` 파일에서 주석을 해제하여 **Pretendard**로 손쉽게 전환할 수 있습니다.
+
+```css
+/* frontend/src/app/globals.css - :root 블록에서 --root-font-sans 변수를 수정하여 폰트를 전환하세요 */
+:root {
+  --root-font-sans: 'A2z', 'Pretendard', sans-serif; /* 기본 서체 (Default) */
+  /* --root-font-sans: 'Pretendard', sans-serif; */ /* 주석 해제 시 프리텐다드로 전환 */
+}
+```
+
+> [!TIP]
+> **폰트 전환 방법**: `frontend/src/app/globals.css` 파일의 `:root` 블록 내에 정의된 `--root-font-sans` 변수에서 원하는 설정의 주석을 해제하거나 수정하여 프로젝트 전체의 폰트를 손쉽게 변경할 수 있습니다. @theme 블록은 이 변수를 참조하여 시스템 서체를 결정합니다.
 
 ### 📊 데이터 관리
 이 프로젝트는 **Supabase**를 연동하여 실시간 데이터를 관리합니다. 단순히 정적인 정보를 저장하는 것을 넘어, 다음과 같은 고도화된 방식을 적용합니다.
