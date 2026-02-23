@@ -101,31 +101,29 @@ CREATE OR REPLACE FUNCTION register_or_link_anonymous_session(
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = pg_catalog, public, pg_temp
 AS $$
 DECLARE
     v_staff_id UUID;
     v_result JSONB;
 BEGIN
-    SELECT id INTO v_staff_id
-    FROM medical_staff
-    WHERE name = p_name
-      AND phone_number = p_phone_number
-    LIMIT 1;
+    -- 원자적 INSERT 시도 (경쟁 상태 방지)
+    INSERT INTO medical_staff (auth_id, name, phone_number, qr_hash, created_at)
+    VALUES (p_auth_id, p_name, p_phone_number, p_qr_hash, NOW())
+    ON CONFLICT (name, phone_number) DO NOTHING
+    RETURNING id INTO v_staff_id;
 
     IF v_staff_id IS NOT NULL THEN
-        -- Link existing profile to new auth session
+        -- Insert 성공: 신규 프로필
+        v_result := jsonb_build_object('status', 'new', 'staff_id', v_staff_id);
+    ELSE
+        -- Insert 실패: 기존 프로필 존재, 세션 연동(Update)
         UPDATE medical_staff 
         SET auth_id = p_auth_id, qr_hash = p_qr_hash
-        WHERE id = v_staff_id;
+        WHERE name = p_name AND phone_number = p_phone_number
+        RETURNING id INTO v_staff_id;
 
         v_result := jsonb_build_object('status', 'linked', 'staff_id', v_staff_id);
-    ELSE
-        -- Create new profile
-        INSERT INTO medical_staff (auth_id, name, phone_number, qr_hash, created_at)
-        VALUES (p_auth_id, p_name, p_phone_number, p_qr_hash, NOW())
-        RETURNING id INTO v_staff_id;
-        
-        v_result := jsonb_build_object('status', 'new', 'staff_id', v_staff_id);
     END IF;
 
     RETURN v_result;
