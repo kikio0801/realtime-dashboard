@@ -19,6 +19,11 @@ interface StatusBadgeProps {
   className?: string
 }
 
+/**
+ * Status badge component for patient cards.
+ * @param {StatusBadgeProps} props - Component properties.
+ * @returns {JSX.Element} Color-coded status badge with icon.
+ */
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const Icon = STATUS_CONFIG[status].icon
   const colors = STATUS_COLORS[status]

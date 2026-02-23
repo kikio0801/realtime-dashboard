@@ -58,7 +58,7 @@
 
 | 분류 | 기술 |
 | :--- | :--- |
-| **Database** | [Supabase](https://supabase.com/) (추후 연동 예정) |
+| **Database** | [Supabase](https://supabase.com/) |
 | **Code Review** | [CodeRabbit](https://coderabbit.ai/) (AI 자동 코드 리뷰) |
 
 ### Backend
