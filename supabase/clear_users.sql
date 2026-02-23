@@ -6,12 +6,13 @@ DECLARE
   confirm_clear BOOLEAN := false; 
 BEGIN
   IF confirm_clear THEN
-    -- 1. 기존 가입된 의료진 데이터 삭제
-    TRUNCATE TABLE public.medical_staff CASCADE;
-
-    -- 2. 관련된 Auth 사용자 데이터 삭제 (필요한 경우)
-    -- auth.users 테이블의 데이터도 날릴 수 있지만 보통 슈퍼베이스 대시보드에서 처리하는 것을 권장합니다.
+    -- 1. 관련된 Auth 사용자 데이터 삭제 (필요한 경우)
+    -- auth.users 데이터 삭제가 필요하면 아래 TRUNCATE 실행 전에 주석을 해제하고 실행하세요.
+    -- (보통 슈퍼베이스 대시보드에서 처리하는 것을 권장합니다)
     -- DELETE FROM auth.users WHERE id IN (SELECT auth_id FROM public.medical_staff);
+
+    -- 2. 기존 가입된 의료진 데이터 삭제
+    TRUNCATE TABLE public.medical_staff CASCADE;
 
     RAISE NOTICE '데이터가 성공적으로 초기화되었습니다.';
   ELSE
