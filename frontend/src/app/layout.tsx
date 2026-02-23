@@ -20,6 +20,12 @@ export const metadata: Metadata = {
 
 import { Providers } from "@/components/providers";
 
+/**
+ * Root layout component for the application.
+ * Configures global fonts, metadata, and common providers (Toaster).
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} props.children - Child elements to render.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

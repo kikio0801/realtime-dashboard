@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from 'react'
 import { LogOut, Settings, User } from 'lucide-react'
 import { toast } from 'sonner'
@@ -14,6 +16,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+/**
+ * User navigation component for the header.
+ * Displays user avatar, dropdown menu with profile, settings, and logout options.
+ * Handles loading states and authentication actions.
+ */
 export function UserNav() {
   const [mounted, setMounted] = useState(false)
   const { user, logout, isLoading } = useUser()
@@ -22,6 +29,13 @@ export function UserNav() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
+
+  const handleLogout = async () => {
+    const success = await logout()
+    if (!success) {
+      toast.error('로그아웃 중 오류가 발생했습니다. 다시 시도해 주세요.')
+    }
+  }
 
   if (!mounted) {
     return (
@@ -77,7 +91,7 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-600 focus:text-red-600">
+        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>
