@@ -16,6 +16,7 @@ function JoinForm() {
   const searchParams = useSearchParams()
   const key = searchParams.get('key') || ''
   const [nickname, setNickname] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const { isAuthenticated, isLoading: isAuthLoading } = useUser()
@@ -36,32 +37,46 @@ function JoinForm() {
     }
 
     const trimmedNickname = nickname.trim()
+    const trimmedPhone = phoneNumber.trim()
+
     if (!trimmedNickname) {
-      toast.error('닉네임을 입력해주세요.')
+      toast.error('이름을 입력해주세요.')
+      return
+    }
+
+    if (!trimmedPhone) {
+      toast.error('전화번호를 입력해주세요.')
       return
     }
 
     if (trimmedNickname.length < 2) {
-      toast.error('닉네임은 최소 2글자 이상이어야 합니다.')
+      toast.error('이름은 최소 2글자 이상이어야 합니다.')
       return
     }
 
     if (trimmedNickname.length > 20) {
-      toast.error('닉네임은 최대 20글자까지 입력 가능합니다.')
+      toast.error('이름은 최대 20글자까지 입력 가능합니다.')
+      return
+    }
+
+    // 간단한 전화번호 정규식 검사 (010-0000-0000)
+    const phoneRegex = /^010-\d{4}-\d{4}$/
+    if (!phoneRegex.test(trimmedPhone)) {
+      toast.error('올바른 전화번호 형식(010-0000-0000)으로 입력해주세요.')
       return
     }
 
     setIsLoading(true)
 
     try {
-      // Register user via mock API
-      await registerUser(key, trimmedNickname)
+      // Register user via API
+      const { isLinked } = await registerUser(key, trimmedNickname, trimmedPhone)
 
       // Redirect to welcome page
-      router.push('/welcome')
+      router.push(`/welcome?linked=${isLinked}`)
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes('already exists')) {
+        if (error.message.includes('already exists') || error.message.includes('사용 중인')) {
           toast.error('이미 사용 중인 QR 코드입니다.')
         } else {
           toast.error('입장에 실패했습니다. 다시 시도해주세요.')
@@ -100,16 +115,16 @@ function JoinForm() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl font-bold">
-            입장하기
+            보안 접속
           </CardTitle>
           <p className="text-muted-foreground text-center text-sm">
-            닉네임을 입력하고 시작하세요
+            원활한 세션 연동을 위해 이름과 전화번호를 입력해주세요
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Nickname Input */}
           <div className="space-y-2">
-            <Label htmlFor="nickname">닉네임</Label>
+            <Label htmlFor="nickname">이름 (실명)</Label>
             <Input
               id="nickname"
               type="text"
@@ -122,33 +137,49 @@ function JoinForm() {
               className="text-base"
               autoFocus
             />
+          </div>
+
+          {/* PhoneNumber Input */}
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber">전화번호</Label>
+            <Input
+              id="phoneNumber"
+              type="tel"
+              placeholder="예: 010-1234-5678"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              onKeyDown={handleKeyPress}
+              disabled={isLoading}
+              maxLength={13}
+              className="text-base"
+            />
             <p className="text-muted-foreground text-xs">
-              2-20자 이내로 입력해주세요
+              가입 여부 확인을 위해 하이픈(-)을 포함하여 입력해주세요
             </p>
           </div>
 
           {/* QR Key Display (for debugging) */}
           <div className="bg-muted rounded-md p-3">
-            <p className="text-muted-foreground text-xs">QR 코드 키</p>
+            <p className="text-muted-foreground text-xs">QR 발급 키 (디버그용)</p>
             <p className="truncate font-mono text-sm">{key}</p>
           </div>
 
           {/* Join Button */}
           <Button
             onClick={handleJoin}
-            disabled={isLoading || !nickname.trim()}
+            disabled={isLoading || !nickname.trim() || !phoneNumber.trim()}
             className="w-full"
             size="lg"
           >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                입장 중...
+                접속 중...
               </>
             ) : (
               <>
                 <LogIn className="mr-2 h-4 w-4" />
-                입장하기
+                접속 확인
               </>
             )}
           </Button>

@@ -8,6 +8,7 @@ import { createClient } from './supabase/client'
 export interface User {
   key: string
   name: string
+  phoneNumber: string
   createdAt: string
   id?: string // Supabase auth.users.id
 }
@@ -19,13 +20,16 @@ const supabase = createClient()
  */
 export const registerUser = async (
   key: string,
-  name: string
-): Promise<User> => {
+  name: string,
+  phoneNumber: string
+): Promise<{ user: User, isLinked: boolean }> => {
   const trimmedKey = key.trim()
   const trimmedName = name.trim()
+  const trimmedPhone = phoneNumber.trim()
   
   if (!trimmedKey) throw new Error('Key is required')
   if (!trimmedName) throw new Error('Name is required')
+  if (!trimmedPhone) throw new Error('Phone number is required')
 
   // 1. Sign in anonymously
   const { data: authData, error: authError } = await supabase.auth.signInAnonymously()
@@ -35,43 +39,37 @@ export const registerUser = async (
     throw new Error('인증에 실패했습니다.')
   }
 
-  // 1.5. Check for existing qr_hash to prevent UNIQUE constraint violation
-  const { data: existingUser } = await supabase
-    .from('medical_staff')
-    .select('id')
-    .eq('qr_hash', trimmedKey)
-    .single()
+  // 2. Register or Link Session (RPC)
+  const { data, error: rpcError } = await supabase.rpc('register_or_link_anonymous_session', {
+    p_auth_id: authData.user.id,
+    p_name: trimmedName,
+    p_phone_number: trimmedPhone,
+    p_qr_hash: trimmedKey
+  })
 
-  if (existingUser) {
-    // If we want to support re-login, we'd need a different strategy.
-    // For now, prevent overwriting/erroring out silently.
+  if (rpcError) {
+    console.error('RPC Error:', rpcError)
     await supabase.auth.signOut()
-    throw new Error('이미 등록된 QR 코드입니다.')
-  }
-
-  // 2. Save profile to Supabase
-  const { error: profileError } = await supabase
-    .from('medical_staff')
-    .upsert({
-      id: authData.user.id,
-      qr_hash: trimmedKey,
-      name: trimmedName,
-      created_at: new Date().toISOString()
-    })
-
-  if (profileError) {
-    console.error('Profile creation error:', profileError)
-    // Sign out to prevent user from being logged in without a profile
-    await supabase.auth.signOut()
+    // Handle unique constraint on QR hash if there are other violations
+    if (rpcError.message.includes('idx_medical_staff_qr_hash')) {
+      throw new Error('이미 사용 중인 QR 코드입니다.')
+    }
     throw new Error('프로필 등록에 실패했습니다.')
   }
 
+  const isLinked = data?.status === 'linked'
+
   // Return formatted user
+  const staffId = data?.staff_id
   return {
-    id: authData.user.id,
-    key: trimmedKey,
-    name: trimmedName,
-    createdAt: new Date().toISOString(),
+    user: {
+      id: staffId,
+      key: trimmedKey,
+      name: trimmedName,
+      phoneNumber: trimmedPhone,
+      createdAt: new Date().toISOString(),
+    },
+    isLinked
   }
 }
 
@@ -91,8 +89,8 @@ export const getCurrentUser = async (): Promise<User | null> => {
   // Fetch profile to get name and qr_hash
   const { data: profile, error: profileError } = await supabase
     .from('medical_staff')
-    .select('qr_hash, name, created_at')
-    .eq('id', session.user.id)
+    .select('id, qr_hash, name, phone_number, created_at')
+    .eq('auth_id', session.user.id)
     .single()
 
   if (profileError) {
@@ -103,9 +101,10 @@ export const getCurrentUser = async (): Promise<User | null> => {
   if (!profile) return null
 
   return {
-    id: session.user.id,
+    id: profile.id,
     key: profile.qr_hash,
     name: profile.name,
+    phoneNumber: profile.phone_number,
     createdAt: profile.created_at || new Date().toISOString(),
   }
 }
