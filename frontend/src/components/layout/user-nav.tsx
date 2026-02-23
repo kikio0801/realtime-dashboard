@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { LogOut, Settings, User } from 'lucide-react'
-import Link from 'next/link'
+import { toast } from 'sonner'
+import { useUser } from '@/hooks/use-user'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +16,7 @@ import {
 
 export function UserNav() {
   const [mounted, setMounted] = useState(false)
+  const { user, logout, isLoading } = useUser()
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -30,6 +32,15 @@ export function UserNav() {
     )
   }
 
+  if (isLoading) {
+    return (
+      <Button
+        variant="ghost"
+        className="relative h-8 w-8 rounded-full border-0 bg-[#5D4037]/50 animate-pulse"
+      />
+    )
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,7 +51,7 @@ export function UserNav() {
           <Avatar className="h-8 w-8 bg-transparent">
             {/* <AvatarImage src="/avatars/01.png" alt="@user" /> */}
             <AvatarFallback className="bg-transparent text-inherit">
-              U
+              {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -48,29 +59,25 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm leading-none font-medium">User Name</p>
+            <p className="text-sm leading-none font-medium">{user?.name || 'User'}</p>
             <p className="text-muted-foreground text-xs leading-none">
-              user@example.com
+              {user?.key ? `Key: ${user.key}` : 'anonymous'}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link href="/profile">
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </Link>
+          <DropdownMenuItem onClick={() => toast.info('아직 구현되지 않은 기능 입니다.')} className="cursor-pointer">
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </Link>
+          <DropdownMenuItem onClick={() => toast.info('아직 구현되지 않은 기능 입니다.')} className="cursor-pointer">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-600 focus:text-red-600">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

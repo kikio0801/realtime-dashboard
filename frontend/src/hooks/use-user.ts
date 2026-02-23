@@ -59,9 +59,18 @@ export function useUser() {
   }, [])
 
   const logout = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    window.location.href = '/join'
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Logout error', error)
+        // Optionally, we could surface a toast here if we passed a toast dispatcher, but console.error is standard for hooks
+        return
+      }
+      setUser(null)
+      window.location.href = '/'
+    } catch (e) {
+      console.error('Unexpected logout error', e)
+    }
   }
 
   return {

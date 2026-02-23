@@ -36,7 +36,15 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
-        <Toaster position="top-right" richColors />
+        <Toaster 
+          position="top-right" 
+          duration={2000}
+          toastOptions={{
+            classNames: {
+              info: '!bg-[#FFF8E1] !border-[#FFECB3] !text-[#5D4037] !font-bold !shadow-md',
+            },
+          }}
+        />
       </body>
     </html>
   );
