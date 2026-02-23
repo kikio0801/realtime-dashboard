@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { getCurrentUser } from '@/lib/mock-api'
+import { getCurrentUser } from '@/lib/auth-api'
 
 export interface UserInfo {
   key: string

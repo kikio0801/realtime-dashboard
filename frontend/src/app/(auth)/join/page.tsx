@@ -8,8 +8,29 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { registerUser } from '@/lib/mock-api'
+import { registerUser } from '@/lib/auth-api'
 import { useUser } from '@/hooks/use-user'
+import { z } from 'zod'
+
+// 유효성 검사 스키마
+const joinSchema = z.object({
+  nickname: z
+    .string()
+    .min(2, '이름은 최소 2글자 이상이어야 합니다.')
+    .max(10, '이름은 최대 10글자까지 입력 가능합니다.')
+    .regex(/^[가-힣]+$/, '이름은 한글로만 입력해주세요.'),
+  phoneNumber: z
+    .string()
+    .regex(/^010-\d{4}-\d{4}$/, '올바른 전화번호 형식(010-0000-0000)으로 입력해주세요.')
+})
+
+// 전화번호 자동 하이픈 포매팅 함수
+const formatPhoneNumber = (value: string) => {
+  const onlyNums = value.replace(/[^0-9]/g, '')
+  if (onlyNums.length < 4) return onlyNums
+  if (onlyNums.length < 8) return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3)}`
+  return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}-${onlyNums.slice(7, 11)}`
+}
 
 function JoinForm() {
   const router = useRouter()
@@ -49,35 +70,29 @@ function JoinForm() {
       return
     }
 
-    if (trimmedNickname.length < 2) {
-      toast.error('이름은 최소 2글자 이상이어야 합니다.')
-      return
-    }
-
-    if (trimmedNickname.length > 20) {
-      toast.error('이름은 최대 20글자까지 입력 가능합니다.')
-      return
-    }
-
-    // 간단한 전화번호 정규식 검사 (010-0000-0000)
-    const phoneRegex = /^010-\d{4}-\d{4}$/
-    if (!phoneRegex.test(trimmedPhone)) {
-      toast.error('올바른 전화번호 형식(010-0000-0000)으로 입력해주세요.')
-      return
-    }
-
-    setIsLoading(true)
-
     try {
+      const parsedData = joinSchema.safeParse({ nickname: trimmedNickname, phoneNumber: trimmedPhone })
+      
+      if (!parsedData.success) {
+        // Zod의 flatten()을 사용하면 에러 메시지 배열을 쉽게 가져올 수 있음
+        const errorMessages = Object.values(parsedData.error.flatten().fieldErrors).flat()
+        toast.error(errorMessages[0] || '입력값이 올바르지 않습니다.')
+        return
+      }
+
+      setIsLoading(true)
+      // API 전송 시 전화번호 하이픈 제거
+      const purePhoneNumber = parsedData.data.phoneNumber.replace(/-/g, '')
+
       // Register user via API
-      const { isLinked } = await registerUser(key, trimmedNickname, trimmedPhone)
+      const { isLinked } = await registerUser(key, parsedData.data.nickname, purePhoneNumber)
 
       // Redirect to welcome page
       router.push(`/welcome?linked=${isLinked}`)
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('already exists') || error.message.includes('사용 중인')) {
-          toast.error('이미 사용 중인 QR 코드입니다.')
+          toast.error('이미 사용 중인 QR 코드입니다. 새로운 QR 코드를 발급 받아주세요.')
         } else {
           toast.error('입장에 실패했습니다. 다시 시도해주세요.')
         }
@@ -85,6 +100,11 @@ function JoinForm() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value)
+    setPhoneNumber(formatted)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -133,7 +153,7 @@ function JoinForm() {
               onChange={(e) => setNickname(e.target.value)}
               onKeyDown={handleKeyPress}
               disabled={isLoading}
-              maxLength={20}
+              maxLength={10}
               className="text-base"
               autoFocus
             />
@@ -147,14 +167,14 @@ function JoinForm() {
               type="tel"
               placeholder="예: 010-1234-5678"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={handlePhoneChange}
               onKeyDown={handleKeyPress}
               disabled={isLoading}
               maxLength={13}
               className="text-base"
             />
             <p className="text-muted-foreground text-xs">
-              가입 여부 확인을 위해 하이픈(-)을 포함하여 입력해주세요
+              가입 여부 확인을 위해 숫자만 입력해주세요 (하이픈 자동 입력)
             </p>
           </div>
 

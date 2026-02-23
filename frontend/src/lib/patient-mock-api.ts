@@ -1,7 +1,8 @@
 /**
  * Mock API for patient data management
- * Simulates backend API using localStorage
- * Follows the pattern established in mock-api.ts
+ * Temporary mock API for patient data management
+ * Follows the pattern established in auth-api.ts
+ * Will be replaced by actual Supabase/FastAPI calls
  */
 
 import { Patient } from '@/types/patient'
