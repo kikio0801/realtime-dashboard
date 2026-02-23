@@ -1,8 +1,10 @@
 -- DB 초기화 스크립트 (기존 유저 정보 제거)
+-- ⚠️ 경고: 이 스크립트는 개발 및 테스트 환경 전용입니다! ⚠️
+-- 프로덕션 환경에서는 절대 실행하지 마십시오. TRUNCATE CASCADE는 연관된 모든 데이터를 삭제합니다.
 
 DO $$ 
 DECLARE
-  -- 안전 장치: 이 값을 true로 변경해야만 삭제가 진행됩니다.
+  -- 안전 장치: 이 값을 true로 변경해야만 삭제가 진행됩니다. (개발 전용)
   confirm_clear BOOLEAN := false; 
 BEGIN
   IF confirm_clear THEN
