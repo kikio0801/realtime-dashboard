@@ -7,6 +7,5 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-set PYTHONPATH=..
 uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 pause

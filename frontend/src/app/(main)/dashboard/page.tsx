@@ -21,7 +21,6 @@ import {
   QrCode,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { initializePatients } from '@/lib/patient-mock-api'
 import { calculatePatientStatus } from '@/features/dashboard/utils/vital-thresholds'
 
 /**
@@ -66,17 +65,8 @@ export default function DashboardPage() {
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
     null
   )
-  const [isInitialized, setIsInitialized] = useState(false)
 
   const { startSimulation, stopSimulation, initializeVitals } = useVitalsStore()
-
-  // Initialize mock patients once
-  useEffect(() => {
-    if (user && !isInitialized) {
-      initializePatients(user.key)
-      setIsInitialized(true)
-    }
-  }, [user, isInitialized])
 
   // Fetch nurse's patients
   const {

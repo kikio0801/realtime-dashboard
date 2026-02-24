@@ -5,7 +5,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  getPatientsByNurse,
   getPatientById,
   getAllPatients,
   updatePatientStatus,
@@ -50,7 +49,7 @@ export function useNursePatients(nurseKey: string) {
   return useQuery({
     queryKey: patientKeys.byNurse(nurseKey),
     queryFn: async (): Promise<PatientWithVitals[]> => {
-      const patients = await getPatientsByNurse(nurseKey)
+      const patients = await getAllPatients()
 
       // Read vitals inside queryFn to get fresh state on each refetch
       const patientVitals = useVitalsStore.getState().patientVitals

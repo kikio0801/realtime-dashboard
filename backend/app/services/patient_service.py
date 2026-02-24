@@ -1,79 +1,71 @@
 """
-Patient data service using Python & Pandas (SOA Architecture)
-Delegates pandas processing to analytics module
+Patient data service using Python & Supabase
+Fetches directly from the DB so all nurses see the same patients.
 """
-import random
-from datetime import datetime, timedelta
 from typing import Optional
-
+from datetime import datetime
 
 from app.models import Patient, PatientStatus
-from app.data.mock_data import SURNAMES, GIVEN_NAMES, DIAGNOSES
-from analytics.pandas_logic import PatientDataProcessor
+from app.db.client import supabase
+
 
 class PatientService:
-    """Service for managing patient data, integrated with SOA analytics module"""
+    """Service for managing patient data directly via Supabase"""
     
-    def __init__(self):
-        self.processor = PatientDataProcessor()
-        
     def seed_patients(self, nurse_key: str, count: int = 5) -> list[Patient]:
-        """Generate seed data for patients"""
-        
-        now = datetime.now()
-        patients = []
-        
-        for i in range(count):
-            surname = SURNAMES[i % len(SURNAMES)]
-            given_name = GIVEN_NAMES[i % len(GIVEN_NAMES)]
-            name = f"{surname}{given_name}"
-            
-            bed_floor = 3  # ICU on 3rd floor
-            bed_number = f"{bed_floor}{str(i + 1).zfill(2)}-{'A' if i % 2 == 0 else 'B'}"
-            
-            admission_date = now - timedelta(days=random.randint(1, 7))
-            
-            patient = Patient(
-                id=f"patient-{int(now.timestamp() * 1000)}-{i}-{random.randint(100000, 999999)}",
-                name=name,
-                age=random.randint(45, 80),
-                bedNumber=bed_number,
-                assignedNurse=nurse_key,
-                status="stable",
-                admissionDate=admission_date.isoformat(),
-                diagnosis=DIAGNOSES[i % len(DIAGNOSES)],
-                createdAt=now.isoformat()
-            )
-            patients.append(patient)
-        
-        # Load into Analytics processor
-        self.processor.load_data([p.model_dump() for p in patients])
-        return patients
+        """No-op: DB manages the data now. Fallback to get_all()"""
+        return self.get_all()
     
+    def _map_row_to_patient(self, row: dict) -> Patient:
+        status_val = row.get("status", "stable")
+        if status_val == "emergency":
+            status_val = "critical"
+            
+        return Patient(
+            id=str(row.get("id", "")),
+            name=row.get("name", "Unknown"),
+            age=row.get("age", 0) or 0,
+            bedNumber=row.get("bed_number", ""),
+            assignedNurse="", # No longer bound to a specific nurse log-in
+            status=status_val,
+            admissionDate=row.get("admission_date") or datetime.now().isoformat(),
+            diagnosis=row.get("diagnosis") or "미상",
+            createdAt=row.get("created_at") or datetime.now().isoformat()
+        )
+
     def get_all(self) -> list[Patient]:
-        """Get all patients"""
-        records = self.processor.get_all_records()
-        return [Patient(**row) for row in records]
+        """Get all patients from Supabase"""
+        if not supabase:
+            print("Supabase client not initialized")
+            return []
+            
+        response = supabase.table("patients").select("*").execute()
+        return [self._map_row_to_patient(row) for row in response.data]
     
     def get_by_id(self, patient_id: str) -> Optional[Patient]:
         """Get patient by ID"""
-        record = self.processor.find_by_id(patient_id)
-        if not record:
+        if not supabase:
             return None
-        return Patient(**record)
+            
+        response = supabase.table("patients").select("*").eq("id", patient_id).execute()
+        if not response.data:
+            return None
+        return self._map_row_to_patient(response.data[0])
     
     def get_by_nurse(self, nurse_key: str) -> list[Patient]:
-        """Get patients assigned to a specific nurse"""
-        records = self.processor.find_by_nurse(nurse_key)
-        return [Patient(**row) for row in records]
+        """Return all patients regardless of nurse"""
+        return self.get_all()
     
     def update_status(self, patient_id: str, status: PatientStatus) -> Optional[Patient]:
         """Update patient status"""
-        record = self.processor.update_field(patient_id, 'status', status)
-        if not record:
+        if not supabase:
             return None
-        return Patient(**record)
+            
+        response = supabase.table("patients").update({"status": status}).eq("id", patient_id).execute()
+        if not response.data:
+            return None
+        return self._map_row_to_patient(response.data[0])
 
 
-# Global instance (in-memory storage)
+# Global instance
 patient_service = PatientService()
