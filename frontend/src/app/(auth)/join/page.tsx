@@ -39,6 +39,7 @@ function JoinForm() {
   const [nickname, setNickname] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<{nickname?: string; phoneNumber?: string}>({})
 
   const { isAuthenticated, isLoading: isAuthLoading } = useUser()
 
@@ -74,12 +75,15 @@ function JoinForm() {
       const parsedData = joinSchema.safeParse({ nickname: trimmedNickname, phoneNumber: trimmedPhone })
       
       if (!parsedData.success) {
-        // Zod의 flatten()을 사용하면 에러 메시지 배열을 쉽게 가져올 수 있음
-        const errorMessages = Object.values(parsedData.error.flatten().fieldErrors).flat()
-        toast.error(errorMessages[0] || '입력값이 올바르지 않습니다.')
+        const fieldErrors = parsedData.error.flatten().fieldErrors
+        setErrors({
+          nickname: fieldErrors.nickname?.[0],
+          phoneNumber: fieldErrors.phoneNumber?.[0]
+        })
         return
       }
 
+      setErrors({})
       setIsLoading(true)
       // API 전송 시 전화번호 하이픈 제거
       const purePhoneNumber = parsedData.data.phoneNumber.replace(/-/g, '')
@@ -102,9 +106,15 @@ function JoinForm() {
     }
   }
 
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNickname(e.target.value)
+    if (errors.nickname) setErrors(prev => ({ ...prev, nickname: undefined }))
+  }
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value)
     setPhoneNumber(formatted)
+    if (errors.phoneNumber) setErrors(prev => ({ ...prev, phoneNumber: undefined }))
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -144,24 +154,25 @@ function JoinForm() {
         <CardContent className="space-y-4">
           {/* Nickname Input */}
           <div className="space-y-2">
-            <Label htmlFor="nickname">이름 (실명)</Label>
+            <Label htmlFor="nickname" className={errors.nickname ? "text-red-500" : ""}>이름 (실명)</Label>
             <Input
               id="nickname"
               type="text"
               placeholder="예: 홍길동"
               value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+              onChange={handleNicknameChange}
               onKeyDown={handleKeyPress}
               disabled={isLoading}
               maxLength={10}
-              className="text-base"
+              className={`text-base ${errors.nickname ? "border-red-500 focus-visible:ring-red-500" : ""}`}
               autoFocus
             />
+            {errors.nickname && <p className="text-sm text-red-500">{errors.nickname}</p>}
           </div>
 
           {/* PhoneNumber Input */}
           <div className="space-y-2">
-            <Label htmlFor="phoneNumber">전화번호</Label>
+            <Label htmlFor="phoneNumber" className={errors.phoneNumber ? "text-red-500" : ""}>전화번호</Label>
             <Input
               id="phoneNumber"
               type="tel"
@@ -171,11 +182,15 @@ function JoinForm() {
               onKeyDown={handleKeyPress}
               disabled={isLoading}
               maxLength={13}
-              className="text-base"
+              className={`text-base ${errors.phoneNumber ? "border-red-500 focus-visible:ring-red-500" : ""}`}
             />
-            <p className="text-muted-foreground text-xs">
-              가입 여부 확인을 위해 숫자만 입력해주세요 (하이픈 자동 입력)
-            </p>
+            {errors.phoneNumber ? (
+              <p className="text-sm text-red-500">{errors.phoneNumber}</p>
+            ) : (
+              <p className="text-muted-foreground text-xs">
+                가입 여부 확인을 위해 숫자만 입력해주세요 (하이픈 자동 입력)
+              </p>
+            )}
           </div>
 
           {/* QR Key Display (for debugging) */}
