@@ -18,4 +18,4 @@
   - [ ] 프로젝트 README.md에 `Database: Supabase 연동 완료` 처리 및 데모 스크린샷 갱신
 
 ## 🧹 추후 기술 부채 해결 (Tech Debt & Refactoring)
-- [ ] `patient-mock-api.ts`의 로컬스토리지 모의 데이터 로직을 FastAPI 백엔드 및 Supabase 연동 코드로 전면 대체
+- [ ] 현재 남은 기술 부채 없음
