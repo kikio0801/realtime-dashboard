@@ -18,20 +18,8 @@
   - [O] Supabase 익명 인증(Anonymous Sign-in)을 활성화하여 로그인 시 자동 JWT 발급 및 세션 관리 구현
   - [O] 프로필 정보를 저장할 `medical_staff` 테이블에 QR `key`와 `name` 보관 및 Supabase Auth 연동
   - [O] Frontend에서 LocalStorage 대신 Supabase 연동 방식(`supabase.auth.signInAnonymously()`)으로 개편
-- [ ] **임상 역사 데이터 및 실시간 데이터 생성기 고도화 (Random Walk)**
-  - [ ] 단순 난수가 아닌 변동성(Volatility)과 추세(Trend)가 반영된 환자 바이탈 데이터 생성기(Random Walk) 백엔드 구현
-  - [ ] 프론트엔드에서 자체적으로 생성하던 랜덤 그래프 데이터를 백엔드 생성 데이터로 대체
-- [ ] **End-to-End 실시간 데이터 파이프라인 완성 (Fr-Bk-DB)**
-  - [ ] FastAPI 서버에서 WebSocket을 통해 수신받은 프론트엔드 연결과 DB의 실시간 동기화 구현
-  - [ ] (백엔드) 랜덤 워크 기반으로 생성되는 실시간 바이탈 데이터를 WebSocket으로 프론트엔드에 지속 전송
-  - [ ] Supabase Realtime API를 통해 변경된 DB 상태를 UI 대시보드에 즉각적으로 반영
 - [O] **Supabase 본격 연동 및 데이터베이스 구축**
   - [O] 발급된 PAT(Personal Access Token)를 활용하여 프로젝트 환경 구성
-  - [ ] 환자 기본 정보(`patients`) 및 실시간 바이탈 데이터(`vitals`) 테이블 스키마 설계 및 마이그레이션 적용
-  - [ ] 생성된 가상 역사 데이터를 Supabase DB에 적재하는 자동화 파이프라인 완성
-- [ ] **최종 안정성 검증 및 문서 업데이트**
-  - [ ] 실제 데이터베이스가 연동된 상태에서 부하 및 오류 테스트 진행
-  - [ ] 프로젝트 README.md에 `Database: Supabase 연동 완료` 처리 및 데모 스크린샷 갱신
   
 ## 🧹 추후 기술 부채 해결 (Tech Debt & Refactoring)
 - [O] `axios.ts` 인터셉터를 Supabase 익명 로그인(Anonymous Auth) 기반 토큰 통신으로 개편
